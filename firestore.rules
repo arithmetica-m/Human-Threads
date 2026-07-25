@@ -1,0 +1,62 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users: private profile data. Only the account owner can read or write
+    // their own doc (name, DOB, country, moods, tasks, favourites, etc.)
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId;
+      allow delete: if false;
+    }
+
+    // Letters: public feed only shows status == "approved". Authors can
+    // always read their own letter regardless of status (so "My Letters"
+    // can show pending/rejected ones back to them).
+    // New letters must be created as "pending" — clients can never set
+    // status to "approved" themselves; that's done by you, signed into the
+    // Firebase console (console access bypasses these rules entirely).
+    match /letters/{letterId} {
+      allow read: if resource.data.status == 'approved'
+                  || (request.auth != null && request.auth.uid == resource.data.authorUid);
+
+      allow create: if request.auth != null
+                    && request.auth.uid == request.resource.data.authorUid
+                    && request.resource.data.status == 'pending'
+                    && request.resource.data.likedByUids == []
+                    && request.resource.data.commentCount == 0;
+
+      // Only two kinds of updates are allowed by clients:
+      // 1) any signed-in user toggling their own like (likedByUids only)
+      // 2) commentCount bumping by exactly +1 when a comment is added
+      // Nothing else (title, status, category, etc.) can be edited by a
+      // client after creation.
+      allow update: if request.auth != null &&
+                    resource.data.status == 'approved' &&
+                    (
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likedByUids'])
+                      || (
+                        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['commentCount'])
+                        && request.resource.data.commentCount == resource.data.commentCount + 1
+                      )
+                    );
+
+      allow delete: if false;
+
+      // Comments: same pending/approved gate. Author can read their own
+      // pending comment; everyone else only sees approved ones.
+      match /comments/{commentId} {
+        allow read: if resource.data.status == 'approved'
+                    || (request.auth != null && request.auth.uid == resource.data.authorUid);
+
+        allow create: if request.auth != null
+                      && request.auth.uid == request.resource.data.authorUid
+                      && request.resource.data.status == 'pending';
+
+        allow update, delete: if false;
+      }
+    }
+  }
+}

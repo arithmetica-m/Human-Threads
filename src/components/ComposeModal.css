@@ -1,0 +1,357 @@
+.compose-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(51, 36, 26, 0.5);
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5vh 4vw;
+  box-sizing: border-box;
+}
+
+.compose-modal {
+  position: relative;
+  width: min(90vw, 900px);
+  height: min(85vh, 760px);
+  max-height: 100%;
+  background: #fdf9f4;
+  border-radius: 16px;
+  box-shadow: 0 30px 70px rgba(51, 36, 26, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: compose-pop-in 0.2s ease;
+}
+
+@keyframes compose-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.compose-modal__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(51, 36, 26, 0.08);
+  color: var(--color-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.2s ease;
+}
+
+.compose-modal__close:hover {
+  background: rgba(51, 36, 26, 0.15);
+}
+
+.compose-modal__steps {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 22px 24px 16px;
+  border-bottom: 1px solid rgba(51, 36, 26, 0.08);
+}
+
+.compose-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(51, 36, 26, 0.15);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-ink);
+  opacity: 0.5;
+  cursor: not-allowed;
+  transition: 0.2s ease;
+}
+
+.compose-step__num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(51, 36, 26, 0.12);
+  font-size: 0.7rem;
+}
+
+.compose-step.done {
+  opacity: 0.85;
+  cursor: pointer;
+}
+
+.compose-step.active {
+  opacity: 1;
+  border-color: var(--color-burnt-sienna);
+  cursor: default;
+}
+
+.compose-step.active .compose-step__num {
+  background: var(--color-burnt-sienna);
+  color: #fff;
+}
+
+.compose-modal__body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.compose-panel {
+  padding: 32px 40px;
+}
+
+.compose-panel h3 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--color-ink);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* background picker */
+
+.bg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.bg-option {
+  position: relative;
+  height: 140px;
+  border-radius: 10px;
+  border: 3px solid transparent;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.bg-option:hover {
+  transform: translateY(-2px);
+}
+
+.bg-option.selected {
+  border-color: var(--color-burnt-sienna);
+}
+
+.bg-option span {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 8px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: #fff;
+  text-align: center;
+  background: linear-gradient(180deg, transparent, rgba(51, 36, 26, 0.55));
+}
+
+/* category picker */
+
+.category-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.category-option {
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(51, 36, 26, 0.2);
+  background: #fff;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.category-option:hover {
+  border-color: var(--color-stormy-sky);
+}
+
+.category-option.selected {
+  background: var(--color-burnt-sienna);
+  border-color: var(--color-burnt-sienna);
+  color: #fff;
+}
+
+/* write step */
+
+.compose-write {
+  height: 100%;
+  min-height: 400px;
+  background-color: #fdf7ee;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 40px;
+  box-sizing: border-box;
+}
+
+.compose-write__panel {
+  width: 100%;
+  max-width: 560px;
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: 12px;
+  padding: 28px 32px;
+  box-sizing: border-box;
+  box-shadow: 0 10px 30px rgba(51, 36, 26, 0.12);
+}
+
+.compose-write__category {
+  display: inline-block;
+  padding: 4px 12px;
+  margin-bottom: 14px;
+  border-radius: 999px;
+  background: rgba(51, 36, 26, 0.08);
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.compose-write__title {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  background: transparent;
+  border-bottom: 1.5px solid rgba(51, 36, 26, 0.2);
+  font-family: var(--font-hand);
+  font-size: 2rem;
+  color: var(--color-ink);
+  padding: 4px 0 10px;
+  margin-bottom: 18px;
+  outline: none;
+}
+
+.compose-write__title::placeholder {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  opacity: 0.5;
+}
+
+.compose-write__body {
+  display: block;
+  width: 100%;
+  min-height: 220px;
+  box-sizing: border-box;
+  border: none;
+  background: transparent;
+  resize: vertical;
+  font-family: var(--font-hand);
+  font-size: 1.3rem;
+  line-height: 1.6;
+  color: var(--color-ink);
+  outline: none;
+}
+
+.compose-write__body::placeholder {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  opacity: 0.5;
+}
+
+/* footer */
+
+.compose-modal__footer {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  border-top: 1px solid rgba(51, 36, 26, 0.08);
+}
+
+.compose-modal__footer-spacer {
+  flex: 1;
+}
+
+.compose-modal .btn-ghost {
+  color: var(--color-ink);
+  border-color: rgba(51, 36, 26, 0.25);
+}
+
+.compose-modal .btn-ghost:hover {
+  background: rgba(51, 36, 26, 0.05);
+}
+
+.compose-modal .btn-solid {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.compose-modal .btn-solid:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+@media (max-width: 640px) {
+  .compose-overlay {
+    padding: 3vh 3vw;
+  }
+
+  .compose-panel {
+    padding: 24px 20px;
+  }
+
+  .compose-write {
+    padding: 20px;
+  }
+
+  .compose-write__panel {
+    padding: 20px;
+  }
+
+  .compose-step__label {
+    display: none;
+  }
+}
+
+.compose-sent {
+  height: 100%;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.compose-sent p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.3rem;
+  color: var(--color-ink);
+  max-width: 380px;
+}

@@ -1,0 +1,54 @@
+.filter-bar {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.filter-search input {
+  width: min(480px, 90vw);
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(51, 36, 26, 0.15);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.filter-search input:focus {
+  border-color: var(--color-stormy-sky);
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.chip {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(51, 36, 26, 0.2);
+  background: transparent;
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.chip:hover {
+  background: rgba(51, 36, 26, 0.05);
+}
+
+.chip.active {
+  background: var(--color-burnt-sienna);
+  border-color: var(--color-burnt-sienna);
+  color: #fff;
+}

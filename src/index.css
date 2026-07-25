@@ -1,0 +1,37 @@
+:root {
+    /* colour palette */
+    --color-burnt-sienna: #984216;
+    --color-ivory-sand: #e4d6c5;
+    --color-stormy-sky: #78898f;
+    --color-sage-green: #8d957e;
+    /* dark warm text colour derived from the palette for readable body text
+       (not one of the swatches you gave me — change if you'd like something else) */
+    --color-ink: #33241a;
+
+    /* extra tints derived from your 4 swatches, used for emotion-category colour
+       coding on the main feed (9 categories, only 4 base colours to work with) */
+    --color-stormy-sky-dark: #56666b;
+    --color-sage-green-light: #b7c0a9;
+    --color-burnt-sienna-light: #c97b4a;
+
+    /* fonts */
+    --font-display: "Cormorant Garamond", serif;
+    --font-body: "Inter", sans-serif;
+    --font-hand: "Caveat", cursive;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family: var(--font-body);
+    color: var(--color-ink);
+    overflow-x:hidden;
+}

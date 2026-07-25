@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find ~/Downloads ~/Desktop ~/Pictures -maxdepth 2 -type f \\\\\\( -iname \"*.png\" -o -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.webp\" \\\\\\) -newermt \"2026-07-23\" 2>/dev/null | head -50)",
+      "Bash(sort -k6,7)",
+      "Bash(xargs -I{} ls -la --time-style=full-iso \"{}\")",
+      "Bash(find ~/Downloads ~/Desktop -maxdepth 2 -type f \\\\\\( -iname \"*.png\" -o -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.webp\" \\\\\\) -newermt \"2026-07-24 20:00:00\" 2>/dev/null)",
+      "Bash(npm install *)"
+    ]
+  }
+}

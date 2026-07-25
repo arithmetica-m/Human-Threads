@@ -1,0 +1,73 @@
+.main-feed {
+  min-height: 100vh;
+  /* real watercolour wash (greener/bluer, less peach) behind a soft ivory
+     veil so text and cards on top stay legible */
+  background-color: var(--color-ivory-sand);
+  background-image: linear-gradient(rgba(228, 214, 197, 0.55), rgba(228, 214, 197, 0.55)),
+    url("../assets/images/Screenshot 2026-07-24 215710.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding-top: 72px;
+  padding-bottom: 80px;
+}
+
+@media (min-width: 641px) {
+  .main-feed {
+    background-attachment: fixed;
+  }
+}
+
+.feed-header {
+  text-align: center;
+  padding: 48px 24px 8px;
+}
+
+.feed-header h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  color: var(--color-ink);
+}
+
+.feed-subheading {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--color-ink);
+  opacity: 0.7;
+  margin-top: 10px;
+}
+
+.letters-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-flow: dense;
+  align-items: start;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 48px 32px;
+}
+
+.no-results {
+  text-align: center;
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  opacity: 0.6;
+  padding-bottom: 40px;
+}
+
+@media (max-width: 1024px) {
+  .letters-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 24px 24px 32px;
+  }
+}
+
+@media (max-width: 640px) {
+  .letters-grid {
+    grid-template-columns: 1fr;
+    padding: 16px 16px 24px;
+  }
+}

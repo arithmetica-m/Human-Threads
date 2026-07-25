@@ -1,0 +1,31 @@
+.encouraging-card {
+  padding: 40px 24px;
+  border-radius: 6px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.7);
+  background-color: var(--color-sage-green);
+  background-image: linear-gradient(rgba(51, 36, 26, 0.32), rgba(51, 36, 26, 0.32)),
+    url("../assets/images/Screenshot 2026-07-24 215710.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 220px;
+  box-sizing: border-box;
+}
+
+.encouraging-card p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.3rem;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(51, 36, 26, 0.35);
+}
+
+@media (min-width: 641px) {
+  .encouraging-card {
+    grid-column: span 2;
+  }
+}
