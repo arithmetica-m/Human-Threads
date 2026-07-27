@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { useUser } from "./UserContext";
+import { useCommunity } from "./CommunityContext";
 
 const LettersContext = createContext(null);
 
@@ -22,7 +23,8 @@ const LettersContext = createContext(null);
 // a separate listener since it must show the author's own pending/rejected
 // letters too, which the public query excludes.
 export function LettersProvider({ children }) {
-  const { user } = useUser();
+  const { user, toggleArrayField } = useUser();
+  const { recordLetterWritten, recordLike, recordComment, recordRead } = useCommunity();
   const [letters, setLetters] = useState([]);
   const [myLetters, setMyLetters] = useState([]);
   const [viewingLetterId, setViewingLetterId] = useState(null);
@@ -61,12 +63,38 @@ export function LettersProvider({ children }) {
       commentCount: 0,
       createdAt: serverTimestamp(),
     });
+    recordLetterWritten();
+  };
+
+  // viewingLetter/commentingOn are looked up across both the public feed and
+  // "my letters" so opening your own pending letter's detail view still works.
+  const findLetter = (id) =>
+    letters.find((l) => l.id === id) || myLetters.find((l) => l.id === id) || null;
+
+  const notifyAuthor = async (authorUid, notification) => {
+    if (authorUid === user.uid) return; // don't notify yourself
+    await addDoc(collection(db, "users", authorUid, "notifications"), {
+      ...notification,
+      read: false,
+      createdAt: serverTimestamp(),
+    });
   };
 
   const toggleLike = async (letterId, liked) => {
     await updateDoc(doc(db, "letters", letterId), {
       likedByUids: liked ? arrayRemove(user.uid) : arrayUnion(user.uid),
     });
+    if (!liked) {
+      recordLike();
+      const letter = findLetter(letterId);
+      if (letter) {
+        await notifyAuthor(letter.authorUid, {
+          type: "like",
+          letterId,
+          message: `${user.username} liked your letter "${letter.title}".`,
+        });
+      }
+    }
   };
 
   const addComment = async (letterId, { tab, text }) => {
@@ -79,15 +107,32 @@ export function LettersProvider({ children }) {
       createdAt: serverTimestamp(),
     });
     await updateDoc(doc(db, "letters", letterId), { commentCount: increment(1) });
-  };
+    recordComment(tab);
 
-  // viewingLetter/commentingOn are looked up across both the public feed and
-  // "my letters" so opening your own pending letter's detail view still works.
-  const findLetter = (id) =>
-    letters.find((l) => l.id === id) || myLetters.find((l) => l.id === id) || null;
+    const letter = findLetter(letterId);
+    if (letter) {
+      await notifyAuthor(letter.authorUid, {
+        type: "comment",
+        letterId,
+        message: `${user.username} left a comment on your letter "${letter.title}".`,
+      });
+    }
+  };
 
   const viewingLetter = findLetter(viewingLetterId);
   const commentingOn = findLetter(commentingOnId);
+
+  // Marks a letter as read (so it sinks in the feed instead of staying at
+  // the top) and counts it toward the community's "letters read" stat —
+  // but only the first time, and not for your own letters.
+  const openLetter = (letter) => {
+    setViewingLetterId(letter.id);
+    const alreadyRead = (user?.readLetterIds || []).includes(letter.id);
+    if (!alreadyRead && letter.authorUid !== user?.uid) {
+      toggleArrayField("readLetterIds", letter.id, true);
+      recordRead();
+    }
+  };
 
   return (
     <LettersContext.Provider
@@ -98,7 +143,7 @@ export function LettersProvider({ children }) {
         toggleLike,
         addComment,
         viewingLetter,
-        openLetter: (letter) => setViewingLetterId(letter.id),
+        openLetter,
         closeLetter: () => setViewingLetterId(null),
         commentingOn,
         openComments: (letter) => setCommentingOnId(letter.id),

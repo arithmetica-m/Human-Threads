@@ -1,0 +1,37 @@
+.community-button {
+  position: fixed;
+  bottom: 32px;
+  left: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 22px;
+  border-radius: 999px;
+  border: none;
+  background: var(--color-sage-green);
+  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(141, 149, 126, 0.4);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  z-index: 200;
+}
+
+.community-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 26px rgba(141, 149, 126, 0.5);
+}
+
+@media (max-width: 640px) {
+  .community-button {
+    bottom: 20px;
+    left: 20px;
+    padding: 16px;
+  }
+
+  .community-button span {
+    display: none;
+  }
+}

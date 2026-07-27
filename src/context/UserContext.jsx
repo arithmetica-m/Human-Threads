@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  sendEmailVerification,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
@@ -65,7 +67,10 @@ export function UserProvider({ children }) {
     return unsubscribe;
   }, [firebaseUser]);
 
-  const user = firebaseUser && profile ? { uid: firebaseUser.uid, ...profile } : null;
+  const user =
+    firebaseUser && profile
+      ? { uid: firebaseUser.uid, emailVerified: firebaseUser.emailVerified, ...profile }
+      : null;
 
   const signUp = async ({ firstName, lastName, dob, country, email, password }) => {
     try {
@@ -77,14 +82,22 @@ export function UserProvider({ children }) {
         country,
         email,
         username: generateUsername(),
+        profilePictureId: null,
         todaysMoods: [],
         dailyAccomplishments: ["", "", ""],
         dailyChallenge: "",
         dailyTasksDone: [],
         weeklyTasksDone: [],
         favouriteLetterIds: [],
+        readLetterIds: [],
+        lastDailySupportDate: null,
+        lastDailyTaskReminderDate: null,
+        lastWeeklyTaskReminderDate: null,
         createdAt: serverTimestamp(),
       });
+      // Fire-and-forget — signup shouldn't fail just because the verification
+      // email didn't send.
+      sendEmailVerification(credential.user).catch(() => {});
       return { success: true };
     } catch (error) {
       return { success: false, message: friendlyAuthError(error) };
@@ -102,8 +115,31 @@ export function UserProvider({ children }) {
 
   const logOut = () => signOut(auth);
 
+  const resendVerificationEmail = () => {
+    if (!auth.currentUser) return Promise.resolve();
+    return sendEmailVerification(auth.currentUser);
+  };
+
+  // Firebase caches emailVerified on the client and only refreshes it after
+  // an explicit reload — call this after the user says they've clicked the
+  // link in their inbox.
+  const refreshEmailVerified = async () => {
+    if (!auth.currentUser) return;
+    await auth.currentUser.reload();
+    setFirebaseUser({ ...auth.currentUser });
+  };
+
+  const sendPasswordReset = async (email) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: friendlyAuthError(error) };
+    }
+  };
+
   // Plain field overwrite — for scalar-ish fields (dailyChallenge, the
-  // dailyAccomplishments array-of-3-strings by index).
+  // dailyAccomplishments array-of-3-strings by index, profilePictureId).
   const updateUser = async (patch) => {
     if (!firebaseUser) return;
     const resolved = typeof patch === "function" ? patch(user) : patch;
@@ -121,7 +157,18 @@ export function UserProvider({ children }) {
 
   return (
     <UserContext.Provider
-      value={{ user, authLoading, signUp, logIn, logOut, updateUser, toggleArrayField }}
+      value={{
+        user,
+        authLoading,
+        signUp,
+        logIn,
+        logOut,
+        updateUser,
+        toggleArrayField,
+        resendVerificationEmail,
+        refreshEmailVerified,
+        sendPasswordReset,
+      }}
     >
       {children}
     </UserContext.Provider>

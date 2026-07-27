@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { UserProvider, useUser } from "./context/UserContext";
+import { CommunityProvider } from "./context/CommunityContext";
 import { LettersProvider } from "./context/LettersContext";
+import { NotificationsProvider } from "./context/NotificationsContext";
 import Landing from "./pages/Landing";
 import AuthPage from "./pages/AuthPage";
 import MainFeed from "./pages/MainFeed";
@@ -56,9 +58,13 @@ function AppContent() {
 function App() {
   return (
     <UserProvider>
-      <LettersProvider>
-        <AppContent />
-      </LettersProvider>
+      <CommunityProvider>
+        <LettersProvider>
+          <NotificationsProvider>
+            <AppContent />
+          </NotificationsProvider>
+        </LettersProvider>
+      </CommunityProvider>
     </UserProvider>
   );
 }

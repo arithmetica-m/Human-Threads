@@ -1,0 +1,48 @@
+.verify-banner {
+  position: sticky;
+  top: 72px;
+  z-index: 90;
+  background: var(--color-burnt-sienna-light);
+  color: #fff;
+  padding: 12px 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.verify-banner p {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.verify-banner__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.verify-banner__actions button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #fff;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+.verify-banner__actions button:hover {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+.verify-banner__actions button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

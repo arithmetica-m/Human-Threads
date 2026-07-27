@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useUser } from "../context/UserContext";
 import { useLetters } from "../context/LettersContext";
+import { useCommunity } from "../context/CommunityContext";
 import { calculateAge } from "../utils/age";
+import { areDailyTasksComplete, areWeeklyTasksComplete } from "../utils/taskStatus";
 import { getCategoryAccent } from "../data/categories";
 import { MOODS, MAX_MOODS } from "../data/moods";
+import { PROFILE_PICTURES, getProfilePicture } from "../data/profilePictures";
 import {
   XIcon,
   UserIcon,
@@ -15,6 +18,7 @@ import {
   LightbulbIcon,
   ThumbsUpIcon,
   CheckIcon,
+  PencilIcon,
 } from "./icons";
 import "./ProfilePanel.css";
 
@@ -67,7 +71,9 @@ function LetterListItem({ letter, onOpen }) {
 export default function ProfilePanel({ open, onClose }) {
   const { user, updateUser, toggleArrayField, logOut } = useUser();
   const { letters, myLetters, openLetter } = useLetters();
+  const { recordDailyComplete, recordWeeklyComplete } = useCommunity();
   const [view, setView] = useState("main");
+  const [pictureOpen, setPictureOpen] = useState(false);
 
   if (!open || !user) return null;
 
@@ -91,7 +97,10 @@ export default function ProfilePanel({ open, onClose }) {
   const setAccomplishment = (index, value) => {
     const next = [...(user.dailyAccomplishments || ["", "", ""])];
     next[index] = value;
+    const wasComplete = areDailyTasksComplete(user);
+    const willBeComplete = areDailyTasksComplete({ ...user, dailyAccomplishments: next });
     updateUser({ dailyAccomplishments: next });
+    if (!wasComplete && willBeComplete) recordDailyComplete();
   };
 
   // "accomplishments" completes itself once all 3 fields are filled in;
@@ -104,12 +113,22 @@ export default function ProfilePanel({ open, onClose }) {
   const toggleDailyTask = (id) => {
     if (id === "accomplishments") return;
     const current = user.dailyTasksDone || [];
-    toggleArrayField("dailyTasksDone", id, !current.includes(id));
+    const adding = !current.includes(id);
+    const nextDone = adding ? [...current, id] : current.filter((t) => t !== id);
+    const wasComplete = areDailyTasksComplete(user);
+    const willBeComplete = areDailyTasksComplete({ ...user, dailyTasksDone: nextDone });
+    toggleArrayField("dailyTasksDone", id, adding);
+    if (!wasComplete && willBeComplete) recordDailyComplete();
   };
 
   const toggleWeeklyTask = (id) => {
     const current = user.weeklyTasksDone || [];
-    toggleArrayField("weeklyTasksDone", id, !current.includes(id));
+    const adding = !current.includes(id);
+    const nextDone = adding ? [...current, id] : current.filter((t) => t !== id);
+    const wasComplete = areWeeklyTasksComplete(user);
+    const willBeComplete = areWeeklyTasksComplete({ ...user, weeklyTasksDone: nextDone });
+    toggleArrayField("weeklyTasksDone", id, adding);
+    if (!wasComplete && willBeComplete) recordWeeklyComplete();
   };
 
   return (
@@ -146,15 +165,51 @@ export default function ProfilePanel({ open, onClose }) {
           ) : (
           <>
           <header className="profile-panel__header">
-            <div className="profile-panel__avatar">
-              <UserIcon size={32} />
-            </div>
+            <button
+              type="button"
+              className="profile-panel__avatar"
+              onClick={() => setPictureOpen((prev) => !prev)}
+              aria-label="Change profile picture"
+            >
+              {user.profilePictureId ? (
+                <img
+                  src={getProfilePicture(user.profilePictureId)}
+                  alt=""
+                  className="profile-panel__avatar-image"
+                />
+              ) : (
+                <UserIcon size={32} />
+              )}
+              <span className="profile-panel__avatar-edit">
+                <PencilIcon size={13} />
+              </span>
+            </button>
             <h2>{user.username}</h2>
             <p className="profile-panel__private">
               {user.firstName} {user.lastName} &middot; {calculateAge(user.dob)} &middot;{" "}
               {user.country}
             </p>
             <span className="profile-panel__private-tag">only visible to you</span>
+
+            {pictureOpen && (
+              <div className="picture-picker">
+                {PROFILE_PICTURES.map((pic) => (
+                  <button
+                    key={pic.id}
+                    type="button"
+                    className={`picture-option ${
+                      user.profilePictureId === pic.id ? "selected" : ""
+                    }`}
+                    onClick={() => {
+                      updateUser({ profilePictureId: pic.id });
+                      setPictureOpen(false);
+                    }}
+                  >
+                    <img src={pic.image} alt={pic.label} />
+                  </button>
+                ))}
+              </div>
+            )}
           </header>
 
           <section className="profile-section">

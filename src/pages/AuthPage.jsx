@@ -7,12 +7,15 @@ import "./AuthPage.css";
 const MIN_AGE = 16;
 
 export default function AuthPage({ initialMode = "login", onAuthenticated, onBack }) {
-  const { signUp, logIn } = useUser();
+  const { signUp, logIn, sendPasswordReset } = useUser();
   const [mode, setMode] = useState(initialMode);
   const [error, setError] = useState("");
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetSent, setResetSent] = useState(false);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -27,6 +30,19 @@ export default function AuthPage({ initialMode = "login", onAuthenticated, onBac
   const switchMode = (nextMode) => {
     setMode(nextMode);
     setError("");
+    setResetSent(false);
+  };
+
+  const handleReset = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    const result = await sendPasswordReset(resetEmail);
+    setSubmitting(false);
+    if (result.success) {
+      setResetSent(true);
+    } else {
+      setError(result.message);
+    }
   };
 
   const handleLogin = async (e) => {
@@ -89,24 +105,60 @@ export default function AuthPage({ initialMode = "login", onAuthenticated, onBac
 
         <div className="auth-logo">Human Threads</div>
 
-        <div className="auth-tabs">
-          <button
-            type="button"
-            className={mode === "login" ? "active" : ""}
-            onClick={() => switchMode("login")}
-          >
-            Log In
-          </button>
-          <button
-            type="button"
-            className={mode === "signup" ? "active" : ""}
-            onClick={() => switchMode("signup")}
-          >
-            Sign Up
-          </button>
-        </div>
+        {mode !== "reset" && (
+          <div className="auth-tabs">
+            <button
+              type="button"
+              className={mode === "login" ? "active" : ""}
+              onClick={() => switchMode("login")}
+            >
+              Log In
+            </button>
+            <button
+              type="button"
+              className={mode === "signup" ? "active" : ""}
+              onClick={() => switchMode("signup")}
+            >
+              Sign Up
+            </button>
+          </div>
+        )}
 
-        {mode === "login" ? (
+        {mode === "reset" ? (
+          resetSent ? (
+            <div className="auth-reset-sent">
+              <p>
+                If an account exists for <strong>{resetEmail}</strong>, a password reset
+                link is on its way — check your inbox (and spam folder).
+              </p>
+              <button type="button" className="auth-link" onClick={() => switchMode("login")}>
+                &larr; Back to log in
+              </button>
+            </div>
+          ) : (
+            <form className="auth-form" onSubmit={handleReset}>
+              <label>
+                Email
+                <input
+                  type="email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                />
+              </label>
+
+              {error && <p className="auth-error">{error}</p>}
+
+              <button type="submit" className="btn btn-solid auth-submit" disabled={submitting}>
+                {submitting ? "Sending..." : "Send reset link"}
+              </button>
+
+              <button type="button" className="auth-link" onClick={() => switchMode("login")}>
+                &larr; Back to log in
+              </button>
+            </form>
+          )
+        ) : mode === "login" ? (
           <form className="auth-form" onSubmit={handleLogin}>
             <label>
               Email
@@ -126,6 +178,14 @@ export default function AuthPage({ initialMode = "login", onAuthenticated, onBac
                 required
               />
             </label>
+
+            <button
+              type="button"
+              className="auth-link auth-forgot"
+              onClick={() => switchMode("reset")}
+            >
+              Forgot password?
+            </button>
 
             {error && <p className="auth-error">{error}</p>}
 

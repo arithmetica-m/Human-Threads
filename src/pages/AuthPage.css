@@ -179,6 +179,46 @@
   border-top: 1px dashed rgba(51, 36, 26, 0.15);
 }
 
+.auth-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--color-stormy-sky-dark);
+  text-align: left;
+  transition: opacity 0.2s ease;
+}
+
+.auth-link:hover {
+  opacity: 0.75;
+}
+
+.auth-forgot {
+  align-self: flex-end;
+  margin-top: -8px;
+}
+
+.auth-reset-sent {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.auth-reset-sent p {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-ink);
+  opacity: 0.85;
+}
+
+.auth-reset-sent .auth-link {
+  align-self: center;
+}
+
 @media (max-width: 480px) {
   .auth-card {
     padding: 32px 22px 24px;

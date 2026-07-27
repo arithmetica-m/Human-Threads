@@ -1,0 +1,21 @@
+.tapestry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0 4px;
+}
+
+.tapestry__svg {
+  width: 100%;
+  max-width: 320px;
+}
+
+.tapestry__caption {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--color-ink);
+  opacity: 0.6;
+  text-align: center;
+}

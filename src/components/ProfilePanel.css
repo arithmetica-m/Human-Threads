@@ -73,6 +73,7 @@
 }
 
 .profile-panel__avatar {
+  position: relative;
   width: 76px;
   height: 76px;
   border-radius: 50%;
@@ -83,6 +84,68 @@
   align-items: center;
   justify-content: center;
   color: #fff;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  padding: 0;
+}
+
+.profile-panel__avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-panel__avatar-edit {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-ink);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fdf9f4;
+}
+
+.picture-picker {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(51, 36, 26, 0.1);
+}
+
+.picture-option {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.picture-option:hover {
+  transform: scale(1.06);
+}
+
+.picture-option.selected {
+  border-color: var(--color-burnt-sienna);
+}
+
+.picture-option img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .profile-panel__header h2 {

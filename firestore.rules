@@ -10,6 +10,38 @@ service cloud.firestore {
       allow create: if request.auth != null && request.auth.uid == userId;
       allow update: if request.auth != null && request.auth.uid == userId;
       allow delete: if false;
+
+      // Notifications: only the owner can read/mark them read. Create is
+      // open to any signed-in user (not just the owner) because liking or
+      // commenting on someone else's letter needs to write a notification
+      // into *their* subcollection — the tradeoff is a signed-in user could
+      // spam annoying notifications, but they can't read/alter anyone else's.
+      match /notifications/{notifId} {
+        allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+        allow create: if request.auth != null;
+      }
+    }
+
+    // Community: one shared stats doc (community/stats). Any signed-in
+    // client can bump the counter fields (writing a letter, liking,
+    // commenting, completing tasks), but nothing else — specialAchievement
+    // is set by you directly in the console, and the doc itself is seeded
+    // once by hand rather than created by a client.
+    match /community/{docId} {
+      allow read: if request.auth != null;
+      allow update: if request.auth != null &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'totalLettersWritten', 'weekLettersWritten',
+          'totalTipsGiven', 'weekTipsGiven',
+          'totalSupportGiven', 'weekSupportGiven',
+          'totalOtherComments', 'weekOtherComments',
+          'totalLikesGiven',
+          'totalLettersRead', 'weekLettersRead',
+          'totalDailyCompletions', 'totalWeeklyCompletions',
+          'tapestryProgress', 'weekStartDate'
+        ]);
+      allow create: if false;
+      allow delete: if false;
     }
 
     // Letters: public feed only shows status == "approved". Authors can
