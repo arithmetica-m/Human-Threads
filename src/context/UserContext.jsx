@@ -33,6 +33,8 @@ function friendlyAuthError(error) {
       return "Password should be at least 6 characters.";
     case "auth/invalid-email":
       return "That doesn't look like a valid email address.";
+    case "auth/too-many-requests":
+      return "Too many attempts right now — please wait a while and try again.";
     default:
       return "Something went wrong — please try again.";
   }
@@ -95,10 +97,15 @@ export function UserProvider({ children }) {
         lastWeeklyTaskReminderDate: null,
         createdAt: serverTimestamp(),
       });
-      // Fire-and-forget — signup shouldn't fail just because the verification
-      // email didn't send.
-      sendEmailVerification(credential.user).catch(() => {});
-      return { success: true };
+      // Signup itself still succeeds even if this fails (the account is real
+      // either way) — but surface it instead of silently pretending it sent.
+      let verificationEmailError = null;
+      try {
+        await sendEmailVerification(credential.user);
+      } catch (error) {
+        verificationEmailError = friendlyAuthError(error);
+      }
+      return { success: true, verificationEmailError };
     } catch (error) {
       return { success: false, message: friendlyAuthError(error) };
     }
@@ -115,9 +122,14 @@ export function UserProvider({ children }) {
 
   const logOut = () => signOut(auth);
 
-  const resendVerificationEmail = () => {
-    if (!auth.currentUser) return Promise.resolve();
-    return sendEmailVerification(auth.currentUser);
+  const resendVerificationEmail = async () => {
+    if (!auth.currentUser) return { success: false, message: "You're not signed in." };
+    try {
+      await sendEmailVerification(auth.currentUser);
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: friendlyAuthError(error) };
+    }
   };
 
   // Firebase caches emailVerified on the client and only refreshes it after

@@ -5,17 +5,25 @@ import "./EmailVerificationBanner.css";
 export default function EmailVerificationBanner() {
   const { user, resendVerificationEmail, refreshEmailVerified } = useUser();
   const [status, setStatus] = useState("idle");
+  const [error, setError] = useState("");
 
   if (!user || user.emailVerified) return null;
 
   const handleResend = async () => {
     setStatus("sending");
-    await resendVerificationEmail();
-    setStatus("sent");
+    setError("");
+    const result = await resendVerificationEmail();
+    if (result.success) {
+      setStatus("sent");
+    } else {
+      setStatus("idle");
+      setError(result.message);
+    }
   };
 
   const handleRefresh = async () => {
     setStatus("checking");
+    setError("");
     await refreshEmailVerified();
     setStatus("idle");
   };
@@ -25,6 +33,7 @@ export default function EmailVerificationBanner() {
       <p>
         Please verify your email ({user.email}) — check your inbox for a link.
         {status === "sent" && " Sent! Check your inbox (and spam folder)."}
+        {error && ` ${error}`}
       </p>
       <div className="verify-banner__actions">
         <button type="button" onClick={handleResend} disabled={status === "sending"}>

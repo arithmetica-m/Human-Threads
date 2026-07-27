@@ -5,7 +5,6 @@ import AppTopBar from "../components/AppTopBar";
 import FilterBar from "../components/FilterBar";
 import LetterCard from "../components/LetterCard";
 import EncouragingCard from "../components/EncouragingCard";
-import AccentTile from "../components/AccentTile";
 import ComposeButton from "../components/ComposeButton";
 import CommunityButton from "../components/CommunityButton";
 import ProfilePanel from "../components/ProfilePanel";
@@ -63,15 +62,13 @@ export default function MainFeed() {
     });
   }, [filteredLetters, user]);
 
-  // Insert the encouraging card into the middle of the feed, plus a small
-  // decorative accent tile earlier on — both help keep the masonry grid
-  // (grid-auto-flow: dense) visually full rather than leaving bare gaps.
+  // Insert the encouraging card into the middle of the feed — the grid's
+  // grid-auto-flow: dense already keeps the masonry layout visually full,
+  // so no extra filler tile is needed alongside it.
   const feedItems = useMemo(() => {
     const items = sortedLetters.map((letter) => ({ type: "letter", letter }));
     const midIndex = Math.floor(items.length / 2);
     items.splice(midIndex, 0, { type: "encouraging" });
-    const quarterIndex = Math.floor(items.length / 4);
-    items.splice(quarterIndex, 0, { type: "accent" });
     return items;
   }, [sortedLetters]);
 
@@ -95,9 +92,8 @@ export default function MainFeed() {
       />
 
       <div className="letters-grid">
-        {feedItems.map((item, index) => {
+        {feedItems.map((item) => {
           if (item.type === "encouraging") return <EncouragingCard key="encouraging" />;
-          if (item.type === "accent") return <AccentTile key={`accent-${index}`} />;
           return <LetterCard key={item.letter.id} letter={item.letter} />;
         })}
       </div>
