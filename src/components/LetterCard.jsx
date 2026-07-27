@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { useUser } from "../context/UserContext";
 import { useLetters } from "../context/LettersContext";
 import { getCategoryAccent, getCategoryTint } from "../data/categories";
 import { getBackgroundImage } from "../data/letterBackgrounds";
-import { HeartIcon, CommentIcon, ShareIcon, BookmarkIcon } from "./icons";
+import { HeartIcon, CommentIcon, BookmarkIcon } from "./icons";
 import defaultTexture from "../assets/images/Screenshot 2026-07-24 215407.png";
 import "./LetterCard.css";
 
@@ -20,6 +21,7 @@ function hashId(id) {
 export default function LetterCard({ letter }) {
   const { user, toggleArrayField } = useUser();
   const { openLetter, openComments, toggleLike } = useLetters();
+  const [pulsing, setPulsing] = useState(false);
 
   const accent = getCategoryAccent(letter.category);
   const tint = getCategoryTint(letter.category, letter.lightBg);
@@ -31,6 +33,14 @@ export default function LetterCard({ letter }) {
 
   const hash = hashId(letter.id);
   const rotation = (hash % 2 === 0 ? -1 : 1) * (1 + (hash % 3) * 0.4);
+
+  const handleLike = () => {
+    toggleLike(letter.id, liked);
+    if (!liked) {
+      setPulsing(true);
+      setTimeout(() => setPulsing(false), 650);
+    }
+  };
 
   return (
     <article
@@ -52,8 +62,8 @@ export default function LetterCard({ letter }) {
 
       <div className="letter-card__actions" onClick={(e) => e.stopPropagation()}>
         <button
-          className={`action ${liked ? "active" : ""}`}
-          onClick={() => toggleLike(letter.id, liked)}
+          className={`action ${liked ? "active" : ""} ${pulsing ? "pulse" : ""}`}
+          onClick={handleLike}
           aria-label="Like"
         >
           <HeartIcon filled={liked} />
@@ -63,11 +73,6 @@ export default function LetterCard({ letter }) {
         <button className="action" aria-label="Comments" onClick={() => openComments(letter)}>
           <CommentIcon />
           <span>{letter.commentCount || 0}</span>
-        </button>
-
-        {/* TODO: wire up actual sharing later */}
-        <button className="action" aria-label="Share">
-          <ShareIcon />
         </button>
 
         <button

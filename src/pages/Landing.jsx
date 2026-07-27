@@ -60,11 +60,11 @@ export default function Landing({ onNavigate }) {
 
           {/* FILL IN: your longer "about the website" message goes here */}
           <p>
-            [ Human Threads is a website designed and built by two students who want to help everyone find some peace, feel supported, and improve their mood. 
-            it is designed to address the growing issue of mental health problems through the process of writing a letter and sharing your emotions, a story, or anything else you want to express anonymously.
+            Human Threads is a website designed and built by two students who want to help everyone find some peace, feel supported, and improve their mood. 
+            It is designed to address the growing issue of mental health problems through the process of writing a letter and sharing your emotions, a story, or anything else you want to express.
             Users can also read the letters others have sent and are encouraged to provide advice and support. The site also celebrates the small wins of each person and has a mini to-do list of daily and weekly activities 
             users can complete. It is in no way claiming to cure mental health problems or claiming to be a profesional tool for the issue, but simply applying techniques which have been proven 
-            to help those struggling feel better. The whole site is anonymous for protection and privacy. Write. Connect. Heal. That's what human threads is about. ]
+            to help those struggling feel better. The whole site is anonymous for protection and privacy. Write. Connect. Heal. That's what human threads is about.
           </p>
         </div>
       </section>

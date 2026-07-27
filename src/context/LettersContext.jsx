@@ -29,6 +29,7 @@ export function LettersProvider({ children }) {
   const [myLetters, setMyLetters] = useState([]);
   const [viewingLetterId, setViewingLetterId] = useState(null);
   const [commentingOnId, setCommentingOnId] = useState(null);
+  const [heartbeatTrigger, setHeartbeatTrigger] = useState(0);
 
   useEffect(() => {
     const q = query(
@@ -86,6 +87,7 @@ export function LettersProvider({ children }) {
     });
     if (!liked) {
       recordLike();
+      setHeartbeatTrigger((prev) => prev + 1);
       const letter = findLetter(letterId);
       if (letter) {
         await notifyAuthor(letter.authorUid, {
@@ -144,6 +146,7 @@ export function LettersProvider({ children }) {
         addComment,
         viewingLetter,
         openLetter,
+        heartbeatTrigger,
         closeLetter: () => setViewingLetterId(null),
         commentingOn,
         openComments: (letter) => setCommentingOnId(letter.id),

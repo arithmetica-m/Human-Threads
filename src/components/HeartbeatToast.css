@@ -1,0 +1,48 @@
+.heartbeat-toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 800;
+  pointer-events: none;
+  background: rgba(253, 249, 244, 0.95);
+  border: 1px solid rgba(51, 36, 26, 0.1);
+  border-radius: 16px;
+  padding: 28px 44px;
+  box-shadow: 0 20px 50px rgba(51, 36, 26, 0.25);
+  text-align: center;
+  animation: heartbeat-toast-fade 2.2s ease forwards;
+}
+
+@keyframes heartbeat-toast-fade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  78% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.heartbeat-toast__title {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: var(--color-burnt-sienna);
+  margin-bottom: 8px;
+}
+
+.heartbeat-toast__subtitle {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: var(--color-ink);
+  opacity: 0.75;
+}

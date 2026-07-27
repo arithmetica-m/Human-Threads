@@ -13,6 +13,7 @@ import CommunityModal from "../components/CommunityModal";
 import LetterDetailModal from "../components/LetterDetailModal";
 import CommentModal from "../components/CommentModal";
 import EmailVerificationBanner from "../components/EmailVerificationBanner";
+import HeartbeatToast from "../components/HeartbeatToast";
 import "./MainFeed.css";
 
 export default function MainFeed() {
@@ -115,6 +116,8 @@ export default function MainFeed() {
       <LetterDetailModal key={viewingLetter?.id ?? "none"} />
 
       <CommentModal />
+
+      <HeartbeatToast />
     </div>
   );
 }

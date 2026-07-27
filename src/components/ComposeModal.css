@@ -281,6 +281,22 @@
   opacity: 0.5;
 }
 
+.compose-write__word-count {
+  display: block;
+  margin-top: 8px;
+  text-align: right;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-ink);
+  opacity: 0.5;
+}
+
+.compose-write__word-count.over {
+  color: var(--color-burnt-sienna);
+  opacity: 1;
+  font-weight: 600;
+}
+
 /* footer */
 
 .compose-modal__footer {

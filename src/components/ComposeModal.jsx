@@ -8,11 +8,17 @@ import "./ComposeModal.css";
 
 const STEPS = ["background", "category", "write"];
 const STEP_LABELS = { background: "Background", category: "Category", write: "Write" };
+const MAX_WORDS = 500;
 
 function estimateSize(text) {
   if (text.length < 120) return "sm";
   if (text.length < 320) return "md";
   return "lg";
+}
+
+function countWords(text) {
+  const trimmed = text.trim();
+  return trimmed === "" ? 0 : trimmed.split(/\s+/).length;
 }
 
 export default function ComposeModal({ open, onClose }) {
@@ -28,6 +34,8 @@ export default function ComposeModal({ open, onClose }) {
   if (!open) return null;
 
   const stepIndex = STEPS.indexOf(step);
+  const wordCount = countWords(body);
+  const overLimit = wordCount > MAX_WORDS;
 
   const reset = () => {
     setStep("background");
@@ -53,7 +61,7 @@ export default function ComposeModal({ open, onClose }) {
   };
 
   const handleSend = async () => {
-    if (!title.trim() || !body.trim() || sending) return;
+    if (!title.trim() || !body.trim() || sending || overLimit) return;
     setSending(true);
 
     await addLetter({
@@ -166,6 +174,9 @@ export default function ComposeModal({ open, onClose }) {
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
                 />
+                <span className={`compose-write__word-count ${overLimit ? "over" : ""}`}>
+                  {wordCount} / {MAX_WORDS} words
+                </span>
               </div>
             </div>
           )}
@@ -202,7 +213,7 @@ export default function ComposeModal({ open, onClose }) {
               <button
                 type="button"
                 className="btn btn-solid"
-                disabled={!title.trim() || !body.trim() || sending}
+                disabled={!title.trim() || !body.trim() || sending || overLimit}
                 onClick={handleSend}
               >
                 <PencilIcon size={16} /> {sending ? "Sending..." : "Send letter"}

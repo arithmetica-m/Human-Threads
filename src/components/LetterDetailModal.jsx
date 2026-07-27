@@ -5,7 +5,7 @@ import { useLetters } from "../context/LettersContext";
 import { useUser } from "../context/UserContext";
 import { getCategoryAccent } from "../data/categories";
 import { getBackgroundImage } from "../data/letterBackgrounds";
-import { HeartIcon, CommentIcon, ShareIcon, BookmarkIcon, XIcon } from "./icons";
+import { HeartIcon, CommentIcon, BookmarkIcon, XIcon } from "./icons";
 import defaultTexture from "../assets/images/Screenshot 2026-07-24 215407.png";
 import "./LetterDetailModal.css";
 
@@ -15,6 +15,7 @@ export default function LetterDetailModal() {
   const { viewingLetter, closeLetter, openComments, toggleLike } = useLetters();
   const { user, toggleArrayField } = useUser();
   const [comments, setComments] = useState([]);
+  const [pulsing, setPulsing] = useState(false);
 
   useEffect(() => {
     if (!viewingLetter) return undefined;
@@ -39,6 +40,14 @@ export default function LetterDetailModal() {
   const liked = (letter.likedByUids || []).includes(user?.uid);
   const likeCount = (letter.likedByUids || []).length;
 
+  const handleLike = () => {
+    toggleLike(letter.id, liked);
+    if (!liked) {
+      setPulsing(true);
+      setTimeout(() => setPulsing(false), 650);
+    }
+  };
+
   return (
     <div className="detail-overlay" onClick={closeLetter}>
       <div className="detail-modal" onClick={(e) => e.stopPropagation()}>
@@ -60,8 +69,8 @@ export default function LetterDetailModal() {
 
           <div className="detail-modal__actions">
             <button
-              className={`action ${liked ? "active" : ""}`}
-              onClick={() => toggleLike(letter.id, liked)}
+              className={`action ${liked ? "active" : ""} ${pulsing ? "pulse" : ""}`}
+              onClick={handleLike}
             >
               <HeartIcon filled={liked} />
               <span>{likeCount}</span>
@@ -70,10 +79,6 @@ export default function LetterDetailModal() {
             <button className="action" onClick={() => openComments(letter)}>
               <CommentIcon />
               <span>{letter.commentCount || 0}</span>
-            </button>
-
-            <button className="action" aria-label="Share">
-              <ShareIcon />
             </button>
 
             <button
