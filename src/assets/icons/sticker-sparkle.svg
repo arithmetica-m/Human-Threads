@@ -1,0 +1,22 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sparkleGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d99a8f" />
+      <stop offset="100%" stop-color="#984216" />
+    </linearGradient>
+  </defs>
+  <path
+    d="M46 12c2 14 6 22 20 24-14 2-18 10-20 24-2-14-6-22-20-24 14-2 18-10 20-24z"
+    fill="url(#sparkleGrad)"
+  />
+  <path
+    d="M76 54c1 8 3 12 11 13-8 1-10 5-11 13-1-8-3-12-11-13 8-1 10-5 11-13z"
+    fill="url(#sparkleGrad)"
+    opacity="0.85"
+  />
+  <path
+    d="M22 62c0.8 6 2 9 8 10-6 1-7 4-8 10-1-6-2-9-8-10 6-1 7-4 8-10z"
+    fill="url(#sparkleGrad)"
+    opacity="0.7"
+  />
+</svg>

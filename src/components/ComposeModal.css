@@ -125,6 +125,16 @@
   margin-bottom: 24px;
 }
 
+.compose-panel__hint {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-ink);
+  opacity: 0.55;
+  text-align: center;
+  margin-top: -14px;
+  margin-bottom: 22px;
+}
+
 /* background picker */
 
 .bg-grid {
@@ -168,6 +178,51 @@
   background: linear-gradient(180deg, transparent, rgba(51, 36, 26, 0.55));
 }
 
+/* sticker picker */
+
+.sticker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  gap: 14px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.sticker-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 76px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: rgba(51, 36, 26, 0.04);
+  cursor: pointer;
+  padding: 8px;
+  box-sizing: border-box;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.sticker-option img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.sticker-option:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: rgba(51, 36, 26, 0.07);
+}
+
+.sticker-option.selected {
+  border-color: var(--color-burnt-sienna);
+  background: rgba(152, 66, 22, 0.08);
+}
+
+.sticker-option:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
 /* category picker */
 
 .category-grid {
@@ -204,6 +259,7 @@
 /* write step */
 
 .compose-write {
+  position: relative;
   height: 100%;
   min-height: 400px;
   background-color: #fdf7ee;
@@ -214,6 +270,29 @@
   justify-content: center;
   padding: 32px 40px;
   box-sizing: border-box;
+}
+
+.compose-write__stickers {
+  position: absolute;
+  top: 18px;
+  right: 28px;
+  display: flex;
+  gap: 4px;
+}
+
+.compose-write__stickers img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 6px rgba(51, 36, 26, 0.2));
+}
+
+.compose-write__stickers img:nth-child(2) {
+  transform: rotate(-6deg) translateY(6px);
+}
+
+.compose-write__stickers img:nth-child(3) {
+  transform: rotate(8deg) translateY(-4px);
 }
 
 .compose-write__panel {

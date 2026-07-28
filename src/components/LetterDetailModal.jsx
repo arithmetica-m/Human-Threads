@@ -4,6 +4,7 @@ import { useUser } from "../context/UserContext";
 import { useApprovedComments } from "../hooks/useApprovedComments";
 import { getCategoryAccent } from "../data/categories";
 import { getBackgroundImage } from "../data/letterBackgrounds";
+import { getSticker } from "../data/stickers";
 import { HeartIcon, CommentIcon, BookmarkIcon, XIcon } from "./icons";
 import defaultTexture from "../assets/images/Screenshot 2026-07-24 215407.png";
 import "./LetterDetailModal.css";
@@ -45,6 +46,15 @@ export default function LetterDetailModal() {
           style={{ backgroundImage: `url(${texture})`, "--accent": accent }}
         >
           <span className="detail-modal__stamp">{letter.category}</span>
+
+          {(letter.stickerIds || []).length > 0 && (
+            <div className="detail-modal__stickers" aria-hidden="true">
+              {letter.stickerIds.map((id) => {
+                const sticker = getSticker(id);
+                return sticker ? <img key={id} src={sticker.image} alt="" /> : null;
+              })}
+            </div>
+          )}
         </div>
 
         <div className="detail-modal__body">

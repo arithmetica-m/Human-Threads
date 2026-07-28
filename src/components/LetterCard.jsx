@@ -4,6 +4,7 @@ import { useLetters } from "../context/LettersContext";
 import { useApprovedComments } from "../hooks/useApprovedComments";
 import { getCategoryAccent, getCategoryTint } from "../data/categories";
 import { getBackgroundImage } from "../data/letterBackgrounds";
+import { getSticker } from "../data/stickers";
 import { HeartIcon, CommentIcon, BookmarkIcon } from "./icons";
 import defaultTexture from "../assets/images/Screenshot 2026-07-24 215407.png";
 import "./LetterCard.css";
@@ -55,6 +56,15 @@ export default function LetterCard({ letter }) {
       onClick={() => openLetter(letter)}
     >
       {size === "lg" && <span className="letter-card__tape" aria-hidden="true" />}
+
+      {(letter.stickerIds || []).length > 0 && (
+        <div className="letter-card__stickers" aria-hidden="true">
+          {letter.stickerIds.map((id) => {
+            const sticker = getSticker(id);
+            return sticker ? <img key={id} src={sticker.image} alt="" /> : null;
+          })}
+        </div>
+      )}
 
       <span className="letter-card__stamp">{letter.category}</span>
 

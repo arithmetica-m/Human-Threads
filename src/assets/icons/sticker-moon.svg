@@ -1,0 +1,19 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="moonGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#78898f" />
+      <stop offset="100%" stop-color="#3f4d52" />
+    </linearGradient>
+  </defs>
+  <path
+    d="M62 18c-16 4-27 19-27 36 0 20 16 36 36 36 8 0 15-2 21-7-6 3-13 5-20 5-22 0-40-18-40-40 0-15 8-28 20-35 3-2 7-2 10 1z"
+    fill="url(#moonGrad)"
+  />
+  <path
+    d="M67 30c2 1 2 4 0 5-6 3-10 9-10 16s4 13 10 16c2 1 2 4 0 5-9-4-15-12-15-21s6-17 15-21z"
+    fill="#ffffff"
+    opacity="0.12"
+  />
+  <path d="M78 20l2.6 6.4L87 29l-6.4 2.6L78 38l-2.6-6.4L69 29l6.4-2.6z" fill="#e8d9a8" opacity="0.9" />
+  <path d="M84 44l1.6 4L90 50l-4.4 1.6L84 56l-1.6-4.4L78 50l4.4-1.6z" fill="#e8d9a8" opacity="0.75" />
+</svg>

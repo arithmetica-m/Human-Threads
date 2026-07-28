@@ -2,12 +2,18 @@ import { useState } from "react";
 import { useLetters } from "../context/LettersContext";
 import { EMOTIONS } from "../data/categories";
 import { LETTER_BACKGROUNDS } from "../data/letterBackgrounds";
+import { STICKERS, MAX_STICKERS } from "../data/stickers";
 import { generateUsername } from "../data/usernames";
 import { XIcon, PencilIcon } from "./icons";
 import "./ComposeModal.css";
 
-const STEPS = ["background", "category", "write"];
-const STEP_LABELS = { background: "Background", category: "Category", write: "Write" };
+const STEPS = ["background", "stickers", "category", "write"];
+const STEP_LABELS = {
+  background: "Background",
+  stickers: "Stickers",
+  category: "Category",
+  write: "Write",
+};
 const MAX_WORDS = 500;
 
 function estimateSize(text) {
@@ -25,6 +31,7 @@ export default function ComposeModal({ open, onClose }) {
   const { addLetter } = useLetters();
   const [step, setStep] = useState("background");
   const [background, setBackground] = useState(null);
+  const [stickerIds, setStickerIds] = useState([]);
   const [category, setCategory] = useState(null);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -40,6 +47,7 @@ export default function ComposeModal({ open, onClose }) {
   const reset = () => {
     setStep("background");
     setBackground(null);
+    setStickerIds([]);
     setCategory(null);
     setTitle("");
     setBody("");
@@ -60,6 +68,14 @@ export default function ComposeModal({ open, onClose }) {
     }
   };
 
+  const toggleSticker = (id) => {
+    setStickerIds((prev) => {
+      if (prev.includes(id)) return prev.filter((s) => s !== id);
+      if (prev.length >= MAX_STICKERS) return prev;
+      return [...prev, id];
+    });
+  };
+
   const handleSend = async () => {
     if (!title.trim() || !body.trim() || sending || overLimit) return;
     setSending(true);
@@ -71,6 +87,7 @@ export default function ComposeModal({ open, onClose }) {
       excerpt: body.trim(),
       size: estimateSize(body.trim()),
       backgroundId: background?.id ?? null,
+      stickerIds,
     });
 
     setSending(false);
@@ -134,6 +151,32 @@ export default function ComposeModal({ open, onClose }) {
             </div>
           )}
 
+          {step === "stickers" && (
+            <div className="compose-panel">
+              <h3>Decorate your letter with stickers</h3>
+              <p className="compose-panel__hint">
+                Optional — pick up to {MAX_STICKERS}.
+              </p>
+              <div className="sticker-grid">
+                {STICKERS.map((sticker) => {
+                  const selected = stickerIds.includes(sticker.id);
+                  const disabled = !selected && stickerIds.length >= MAX_STICKERS;
+                  return (
+                    <button
+                      key={sticker.id}
+                      type="button"
+                      className={`sticker-option ${selected ? "selected" : ""}`}
+                      disabled={disabled}
+                      onClick={() => toggleSticker(sticker.id)}
+                    >
+                      <img src={sticker.image} alt={sticker.label} />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {step === "category" && (
             <div className="compose-panel">
               <h3>Choose a category</h3>
@@ -159,6 +202,16 @@ export default function ComposeModal({ open, onClose }) {
                 background ? { backgroundImage: `url(${background.image})` } : undefined
               }
             >
+              {stickerIds.length > 0 && (
+                <div className="compose-write__stickers">
+                  {stickerIds.map((id) => {
+                    const sticker = STICKERS.find((s) => s.id === id);
+                    return sticker ? (
+                      <img key={id} src={sticker.image} alt={sticker.label} />
+                    ) : null;
+                  })}
+                </div>
+              )}
               <div className="compose-write__panel">
                 {category && <span className="compose-write__category">{category}</span>}
                 <input
@@ -202,7 +255,13 @@ export default function ComposeModal({ open, onClose }) {
               <button
                 type="button"
                 className="btn btn-solid"
-                disabled={step === "background" ? !background : !category}
+                disabled={
+                  step === "background"
+                    ? !background
+                    : step === "category"
+                    ? !category
+                    : false
+                }
                 onClick={() => setStep(STEPS[stepIndex + 1])}
               >
                 Next &rarr;

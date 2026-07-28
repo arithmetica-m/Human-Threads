@@ -1,0 +1,20 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="sunGrad" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#f0c988" />
+      <stop offset="100%" stop-color="#c97b4a" />
+    </radialGradient>
+  </defs>
+  <g stroke="#c97b4a" stroke-width="3.5" stroke-linecap="round" opacity="0.8">
+    <line x1="50" y1="8" x2="50" y2="18" />
+    <line x1="50" y1="82" x2="50" y2="92" />
+    <line x1="8" y1="50" x2="18" y2="50" />
+    <line x1="82" y1="50" x2="92" y2="50" />
+    <line x1="20" y1="20" x2="27" y2="27" />
+    <line x1="73" y1="73" x2="80" y2="80" />
+    <line x1="80" y1="20" x2="73" y2="27" />
+    <line x1="27" y1="73" x2="20" y2="80" />
+  </g>
+  <circle cx="50" cy="50" r="24" fill="url(#sunGrad)" />
+  <circle cx="50" cy="50" r="24" fill="#ffffff" opacity="0.08" />
+</svg>

@@ -57,6 +57,7 @@ export function LettersProvider({ children }) {
   const addLetter = async (letter) => {
     await addDoc(collection(db, "letters"), {
       ...letter,
+      stickerIds: letter.stickerIds || [],
       authorUid: user.uid,
       status: "pending",
       likedByUids: [],
