@@ -80,8 +80,10 @@ export default function MainFeed() {
 
       <header className="feed-header">
         <h1>Letters I&apos;ll Never Send</h1>
-        {/* FILL IN: optional short encouraging message under the heading */}
-        <p className="feed-subheading">[ Optional short message goes here ]</p>
+        <p className="feed-subheading">Write. Connect. Heal.</p>
+        <p className="feed-subquestion">
+          This week&apos;s question: Who made me laugh the most this week?
+        </p>
       </header>
 
       <FilterBar

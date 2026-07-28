@@ -21,6 +21,22 @@ import { generateUsername } from "../data/usernames";
 
 const UserContext = createContext(null);
 
+function todayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+// Monday of the current week, as a date-string key — mirrors the same
+// lazy-rollover key used for the community's weekly stats, so "this week"
+// means the same thing everywhere in the app.
+function weekKey() {
+  const d = new Date();
+  const day = d.getDay();
+  const diffToMonday = (day === 0 ? -6 : 1) - day;
+  const monday = new Date(d);
+  monday.setDate(d.getDate() + diffToMonday);
+  return monday.toISOString().slice(0, 10);
+}
+
 function friendlyAuthError(error) {
   switch (error.code) {
     case "auth/email-already-in-use":
@@ -74,6 +90,35 @@ export function UserProvider({ children }) {
       ? { uid: firebaseUser.uid, emailVerified: firebaseUser.emailVerified, ...profile }
       : null;
 
+  // Lazily roll daily/weekly checklists over — there's no backend cron, so
+  // this only fires when a signed-in client notices the day/week has
+  // changed since the profile doc was last touched. Guarded by date-key
+  // comparisons so it's a no-op once the fields are already reset.
+  useEffect(() => {
+    if (!user || !firebaseUser) return;
+    const patch = {};
+    const today = todayKey();
+    if (user.lastDailyResetDate !== today) {
+      Object.assign(patch, {
+        todaysMoods: [],
+        dailyAccomplishments: ["", "", ""],
+        dailyChallenge: "",
+        dailyTasksDone: [],
+        lastDailyResetDate: today,
+      });
+    }
+    const week = weekKey();
+    if (user.lastWeeklyResetDate !== week) {
+      Object.assign(patch, {
+        weeklyTasksDone: [],
+        lastWeeklyResetDate: week,
+      });
+    }
+    if (Object.keys(patch).length > 0) {
+      updateDoc(doc(db, "users", firebaseUser.uid), patch).catch(() => {});
+    }
+  }, [user?.uid, user?.lastDailyResetDate, user?.lastWeeklyResetDate, firebaseUser]);
+
   const signUp = async ({ firstName, lastName, dob, country, email, password }) => {
     try {
       const credential = await createUserWithEmailAndPassword(auth, email, password);
@@ -95,6 +140,8 @@ export function UserProvider({ children }) {
         lastDailySupportDate: null,
         lastDailyTaskReminderDate: null,
         lastWeeklyTaskReminderDate: null,
+        lastDailyResetDate: todayKey(),
+        lastWeeklyResetDate: weekKey(),
         createdAt: serverTimestamp(),
       });
       // Signup itself still succeeds even if this fails (the account is real

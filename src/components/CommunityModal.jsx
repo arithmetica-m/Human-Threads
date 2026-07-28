@@ -9,13 +9,22 @@ const STAT_ITEMS = [
   { key: "weekLettersRead", label: "Letters read this week", Icon: EyeIcon },
   { key: "weekLettersWritten", label: "Letters written this week", Icon: PencilIcon },
   { key: "totalLettersWritten", label: "Letters written in total", Icon: PencilIcon },
-  { key: "totalOtherComments", label: "Comments shared in total", Icon: CommentIcon },
+  { key: "totalComments", label: "Comments shared in total", Icon: CommentIcon },
 ];
 
 export default function CommunityModal({ open, onClose }) {
   const { stats } = useCommunity();
 
   if (!open) return null;
+
+  // Comments are tallied per-tab (support/tips/other) for the weekly
+  // breakdown, so "in total" has to sum all three — reading just
+  // totalOtherComments alone only counted the "other" tab's comments.
+  const displayStats = stats && {
+    ...stats,
+    totalComments:
+      (stats.totalSupportGiven || 0) + (stats.totalTipsGiven || 0) + (stats.totalOtherComments || 0),
+  };
 
   return (
     <div className="community-overlay" onClick={onClose}>
@@ -39,7 +48,7 @@ export default function CommunityModal({ open, onClose }) {
             {STAT_ITEMS.map(({ key, label, Icon }) => (
               <div className="community-stat" key={key}>
                 <Icon size={20} />
-                <span className="community-stat__value">{stats?.[key] ?? 0}</span>
+                <span className="community-stat__value">{displayStats?.[key] ?? 0}</span>
                 <span className="community-stat__label">{label}</span>
               </div>
             ))}

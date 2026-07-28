@@ -46,7 +46,7 @@ const DAILY_TASKS = [
 ];
 
 const WEEKLY_TASKS = [
-  { id: "weekly-question", label: "Answer the weekly question", Icon: SmileIcon },
+  { id: "weekly-question", label: "Write a letter to this week's question", Icon: SmileIcon },
   { id: "new-category", label: "Write a letter in a new category", Icon: CompassIcon },
 ];
 

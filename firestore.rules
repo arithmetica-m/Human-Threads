@@ -3,6 +3,14 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Site owner's account, checked by email claim on the auth token
+    // (present by default for email/password sign-in). Lets the in-app
+    // moderation panel read and approve/reject pending letters and comments
+    // without needing the Firebase console or an Admin SDK key.
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'elenisigoulaki44@gmail.com';
+    }
+
     // Users: private profile data. Only the account owner can read or write
     // their own doc (name, DOB, country, moods, tasks, favourites, etc.)
     match /users/{userId} {
@@ -52,34 +60,44 @@ service cloud.firestore {
     // Firebase console (console access bypasses these rules entirely).
     match /letters/{letterId} {
       allow read: if resource.data.status == 'approved'
-                  || (request.auth != null && request.auth.uid == resource.data.authorUid);
+                  || (request.auth != null && request.auth.uid == resource.data.authorUid)
+                  || isAdmin();
 
       allow create: if request.auth != null
                     && request.auth.uid == request.resource.data.authorUid
                     && request.resource.data.status == 'pending'
                     && request.resource.data.likedByUids == [];
 
-      // The only update a client can make after creation is toggling their
-      // own like. Comment counts are derived live from the comments
-      // subcollection instead of a separately maintained counter, so there's
-      // nothing else for a client to touch here.
+      // A client can either toggle their own like (comment counts are
+      // derived live from the comments subcollection, so there's nothing
+      // else to touch there), or, if they're the site owner, flip the
+      // status field to approve/reject a pending letter.
       allow update: if request.auth != null &&
-                    resource.data.status == 'approved' &&
-                    request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likedByUids']);
+                    (
+                      (resource.data.status == 'approved' &&
+                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likedByUids']))
+                      || (isAdmin() &&
+                          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']))
+                    );
 
       allow delete: if false;
 
-      // Comments: same pending/approved gate. Author can read their own
-      // pending comment; everyone else only sees approved ones.
+      // Comments: same pending/approved gate, plus the admin exception so
+      // the moderation panel can see and approve/reject pending comments
+      // on anyone's letter.
       match /comments/{commentId} {
         allow read: if resource.data.status == 'approved'
-                    || (request.auth != null && request.auth.uid == resource.data.authorUid);
+                    || (request.auth != null && request.auth.uid == resource.data.authorUid)
+                    || isAdmin();
 
         allow create: if request.auth != null
                       && request.auth.uid == request.resource.data.authorUid
                       && request.resource.data.status == 'pending';
 
-        allow update, delete: if false;
+        allow update: if isAdmin() &&
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+
+        allow delete: if false;
       }
     }
   }
