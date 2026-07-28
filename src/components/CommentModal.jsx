@@ -12,6 +12,7 @@ export default function CommentModal() {
   const [customText, setCustomText] = useState("");
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
 
   if (!commentingOn) return null;
 
@@ -20,16 +21,23 @@ export default function CommentModal() {
     setCustomText("");
     setSending(false);
     setSent(false);
+    setError("");
     closeComments();
   };
 
   const send = async (text) => {
     if (!text.trim() || sending) return;
     setSending(true);
-    await addComment(commentingOn.id, { tab, text: text.trim() });
-    setSending(false);
-    setSent(true);
-    setTimeout(handleClose, 1200);
+    setError("");
+    try {
+      await addComment(commentingOn.id, { tab, text: text.trim() });
+      setSending(false);
+      setSent(true);
+      setTimeout(handleClose, 1200);
+    } catch (err) {
+      setSending(false);
+      setError("Couldn't send that — please try again.");
+    }
   };
 
   return (
@@ -75,6 +83,8 @@ export default function CommentModal() {
                 </button>
               ))}
             </div>
+
+            {error && <p className="comment-error">{error}</p>}
 
             <div className="comment-custom">
               <textarea

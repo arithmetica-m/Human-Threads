@@ -151,6 +151,13 @@
   border-color: var(--color-stormy-sky);
 }
 
+.comment-error {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--color-burnt-sienna);
+  margin: 0 0 10px;
+}
+
 .comment-custom .btn-solid {
   align-self: flex-end;
   padding: 9px 22px;

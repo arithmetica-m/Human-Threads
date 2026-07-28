@@ -1,9 +1,11 @@
 .encouraging-card {
   border-radius: 6px;
   border: 1px solid rgba(51, 36, 26, 0.1);
-  background-color: var(--color-ivory-sand);
+  background-color: #fdf9f4;
   background-image: url("../assets/images/Screenshot 2026-07-27 220531.png");
-  background-size: cover;
+  /* contain (not cover) so the whole image — including the "You've got
+     this." text near the top — is always visible, never cropped */
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   min-height: 220px;
