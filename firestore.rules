@@ -57,23 +57,15 @@ service cloud.firestore {
       allow create: if request.auth != null
                     && request.auth.uid == request.resource.data.authorUid
                     && request.resource.data.status == 'pending'
-                    && request.resource.data.likedByUids == []
-                    && request.resource.data.commentCount == 0;
+                    && request.resource.data.likedByUids == [];
 
-      // Only two kinds of updates are allowed by clients:
-      // 1) any signed-in user toggling their own like (likedByUids only)
-      // 2) commentCount bumping by exactly +1 when a comment is added
-      // Nothing else (title, status, category, etc.) can be edited by a
-      // client after creation.
+      // The only update a client can make after creation is toggling their
+      // own like. Comment counts are derived live from the comments
+      // subcollection instead of a separately maintained counter, so there's
+      // nothing else for a client to touch here.
       allow update: if request.auth != null &&
                     resource.data.status == 'approved' &&
-                    (
-                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likedByUids'])
-                      || (
-                        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['commentCount'])
-                        && request.resource.data.commentCount == resource.data.commentCount + 1
-                      )
-                    );
+                    request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likedByUids']);
 
       allow delete: if false;
 

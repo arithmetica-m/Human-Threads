@@ -99,13 +99,14 @@ export function UserProvider({ children }) {
       });
       // Signup itself still succeeds even if this fails (the account is real
       // either way) — but surface it instead of silently pretending it sent.
-      let verificationEmailError = null;
+      // Stashed in sessionStorage since the app navigates straight to the
+      // feed after signup; the verification banner picks this up on mount.
       try {
         await sendEmailVerification(credential.user);
       } catch (error) {
-        verificationEmailError = friendlyAuthError(error);
+        sessionStorage.setItem("initialVerificationError", friendlyAuthError(error));
       }
-      return { success: true, verificationEmailError };
+      return { success: true };
     } catch (error) {
       return { success: false, message: friendlyAuthError(error) };
     }

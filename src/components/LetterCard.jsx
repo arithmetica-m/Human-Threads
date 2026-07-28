@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useUser } from "../context/UserContext";
 import { useLetters } from "../context/LettersContext";
+import { useApprovedComments } from "../hooks/useApprovedComments";
 import { getCategoryAccent, getCategoryTint } from "../data/categories";
 import { getBackgroundImage } from "../data/letterBackgrounds";
 import { HeartIcon, CommentIcon, BookmarkIcon } from "./icons";
@@ -22,6 +23,7 @@ export default function LetterCard({ letter }) {
   const { user, toggleArrayField } = useUser();
   const { openLetter, openComments, toggleLike } = useLetters();
   const [pulsing, setPulsing] = useState(false);
+  const comments = useApprovedComments(letter.id);
 
   const accent = getCategoryAccent(letter.category);
   const tint = getCategoryTint(letter.category, letter.lightBg);
@@ -72,7 +74,7 @@ export default function LetterCard({ letter }) {
 
         <button className="action" aria-label="Comments" onClick={() => openComments(letter)}>
           <CommentIcon />
-          <span>{letter.commentCount || 0}</span>
+          <span>{comments.length}</span>
         </button>
 
         <button

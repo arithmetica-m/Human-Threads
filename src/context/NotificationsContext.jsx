@@ -9,6 +9,7 @@ import {
   query,
   serverTimestamp,
   updateDoc,
+  where,
   writeBatch,
 } from "firebase/firestore";
 import { db } from "../firebase";
@@ -38,8 +39,13 @@ export function NotificationsProvider({ children }) {
       setNotifications([]);
       return undefined;
     }
+    // Only unread notifications are fetched — marking one as read flips its
+    // `read` field to true, which drops it out of this query automatically,
+    // so it simply disappears from the panel rather than needing separate
+    // client-side filtering.
     const q = query(
       collection(db, "users", user.uid, "notifications"),
+      where("read", "==", false),
       orderBy("createdAt", "desc"),
       limit(50)
     );
@@ -98,7 +104,9 @@ export function NotificationsProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.uid, user && todayKey()]);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  // Every notification in state is unread by construction (the query already
+  // filters to read == false), so the count is just the list length.
+  const unreadCount = notifications.length;
 
   const markAsRead = async (id) => {
     if (!user) return;
@@ -106,11 +114,9 @@ export function NotificationsProvider({ children }) {
   };
 
   const markAllAsRead = async () => {
-    if (!user) return;
-    const unread = notifications.filter((n) => !n.read);
-    if (unread.length === 0) return;
+    if (!user || notifications.length === 0) return;
     const batch = writeBatch(db);
-    unread.forEach((n) => {
+    notifications.forEach((n) => {
       batch.update(doc(db, "users", user.uid, "notifications", n.id), { read: true });
     });
     await batch.commit();

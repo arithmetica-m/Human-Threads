@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
-import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
-import { db } from "../firebase";
+import { useState } from "react";
 import { useLetters } from "../context/LettersContext";
 import { useUser } from "../context/UserContext";
+import { useApprovedComments } from "../hooks/useApprovedComments";
 import { getCategoryAccent } from "../data/categories";
 import { getBackgroundImage } from "../data/letterBackgrounds";
 import { HeartIcon, CommentIcon, BookmarkIcon, XIcon } from "./icons";
@@ -14,22 +13,8 @@ const TAB_LABELS = { tips: "Tip", support: "Support", other: "Other" };
 export default function LetterDetailModal() {
   const { viewingLetter, closeLetter, openComments, toggleLike } = useLetters();
   const { user, toggleArrayField } = useUser();
-  const [comments, setComments] = useState([]);
   const [pulsing, setPulsing] = useState(false);
-
-  useEffect(() => {
-    if (!viewingLetter) return undefined;
-
-    const q = query(
-      collection(db, "letters", viewingLetter.id, "comments"),
-      where("status", "==", "approved"),
-      orderBy("createdAt", "desc")
-    );
-    const unsubscribe = onSnapshot(q, (snap) => {
-      setComments(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-    });
-    return unsubscribe;
-  }, [viewingLetter]);
+  const comments = useApprovedComments(viewingLetter?.id);
 
   if (!viewingLetter) return null;
 
@@ -78,7 +63,7 @@ export default function LetterDetailModal() {
 
             <button className="action" onClick={() => openComments(letter)}>
               <CommentIcon />
-              <span>{letter.commentCount || 0}</span>
+              <span>{comments.length}</span>
             </button>
 
             <button

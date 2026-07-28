@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "../context/UserContext";
 import "./EmailVerificationBanner.css";
 
@@ -6,6 +6,17 @@ export default function EmailVerificationBanner() {
   const { user, resendVerificationEmail, refreshEmailVerified } = useUser();
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
+
+  // If the verification email failed to send during signup itself (the app
+  // navigates straight to the feed, so there was no page to show it on at
+  // the time), pick that error up here instead of pretending it went out.
+  useEffect(() => {
+    const stashed = sessionStorage.getItem("initialVerificationError");
+    if (stashed) {
+      setError(stashed);
+      sessionStorage.removeItem("initialVerificationError");
+    }
+  }, []);
 
   if (!user || user.emailVerified) return null;
 

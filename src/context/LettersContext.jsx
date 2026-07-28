@@ -5,7 +5,6 @@ import {
   arrayUnion,
   collection,
   doc,
-  increment,
   onSnapshot,
   orderBy,
   query,
@@ -61,7 +60,6 @@ export function LettersProvider({ children }) {
       authorUid: user.uid,
       status: "pending",
       likedByUids: [],
-      commentCount: 0,
       createdAt: serverTimestamp(),
     });
     recordLetterWritten();
@@ -108,7 +106,6 @@ export function LettersProvider({ children }) {
       status: "pending",
       createdAt: serverTimestamp(),
     });
-    await updateDoc(doc(db, "letters", letterId), { commentCount: increment(1) });
     recordComment(tab);
 
     const letter = findLetter(letterId);
