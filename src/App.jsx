@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import { UserProvider, useUser } from "./context/UserContext";
 import { CommunityProvider } from "./context/CommunityContext";
 import { LettersProvider } from "./context/LettersContext";
@@ -65,6 +66,7 @@ function App() {
           </NotificationsProvider>
         </LettersProvider>
       </CommunityProvider>
+      <Analytics />
     </UserProvider>
   );
 }
