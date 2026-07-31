@@ -3,7 +3,7 @@ import { db } from "../firebase";
 import { CheckIcon, XIcon } from "./icons";
 import "./AdminPanel.css";
 
-export default function AdminPanel({ open, onClose, pendingLetters, pendingComments }) {
+export default function AdminPanel({ open, onClose, pendingLetters, pendingComments, pendingCheckins }) {
   if (!open) return null;
 
   const setLetterStatus = (letterId, status) => {
@@ -14,7 +14,11 @@ export default function AdminPanel({ open, onClose, pendingLetters, pendingComme
     updateDoc(doc(db, "letters", letterId, "comments", commentId), { status }).catch(() => {});
   };
 
-  const total = pendingLetters.length + pendingComments.length;
+  const setCheckinStatus = (checkinId, status) => {
+    updateDoc(doc(db, "checkins", checkinId), { status }).catch(() => {});
+  };
+
+  const total = pendingLetters.length + pendingComments.length + pendingCheckins.length;
 
   return (
     <div className="admin-overlay" onClick={onClose}>
@@ -84,6 +88,36 @@ export default function AdminPanel({ open, onClose, pendingLetters, pendingComme
                       className="admin-action admin-action--reject"
                       onClick={() => setCommentStatus(comment.letterId, comment.id, "rejected")}
                       aria-label="Reject comment"
+                    >
+                      <XIcon size={15} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              {pendingCheckins.map((checkin) => (
+                <div key={checkin.id} className="admin-row">
+                  <span className="admin-row__tag admin-row__tag--comment">Check-in</span>
+                  <div className="admin-row__body">
+                    <p className="admin-row__title">
+                      {checkin.rating}/10 &middot; {checkin.country}
+                    </p>
+                    <p className="admin-row__excerpt">{checkin.comment || "(no comment)"}</p>
+                  </div>
+                  <div className="admin-row__actions">
+                    <button
+                      type="button"
+                      className="admin-action admin-action--approve"
+                      onClick={() => setCheckinStatus(checkin.id, "approved")}
+                      aria-label="Approve check-in"
+                    >
+                      <CheckIcon size={15} />
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-action admin-action--reject"
+                      onClick={() => setCheckinStatus(checkin.id, "rejected")}
+                      aria-label="Reject check-in"
                     >
                       <XIcon size={15} />
                     </button>

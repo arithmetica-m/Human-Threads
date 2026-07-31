@@ -1,0 +1,234 @@
+.globe-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(51, 36, 26, 0.5);
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4vh 4vw;
+  box-sizing: border-box;
+}
+
+.globe-modal {
+  position: relative;
+  width: min(94vw, 1100px);
+  height: min(92vh, 860px);
+  max-height: 100%;
+  background: #fdf9f4;
+  border-radius: 16px;
+  box-shadow: 0 30px 70px rgba(51, 36, 26, 0.35);
+  display: flex;
+  flex-direction: column;
+  padding: 28px 32px 20px;
+  box-sizing: border-box;
+  animation: globe-pop-in 0.2s ease;
+}
+
+@keyframes globe-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.globe-modal__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(51, 36, 26, 0.08);
+  color: var(--color-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.2s ease;
+}
+
+.globe-modal__close:hover {
+  background: rgba(51, 36, 26, 0.15);
+}
+
+.globe-modal__title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  color: var(--color-ink);
+  margin-bottom: 14px;
+  flex-shrink: 0;
+}
+
+.globe-rate-form {
+  flex-shrink: 0;
+  max-width: 560px;
+  margin: 0 auto 12px;
+  width: 100%;
+}
+
+.rating-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.rating-chip {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(51, 36, 26, 0.2);
+  background: #fff;
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.rating-chip:hover {
+  border-color: var(--color-stormy-sky);
+}
+
+.rating-chip.active {
+  color: #fff;
+  font-weight: 600;
+}
+
+.globe-comment-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(51, 36, 26, 0.18);
+  background: #fff;
+  color: var(--color-ink);
+  outline: none;
+  min-height: 54px;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.globe-comment-input:focus {
+  border-color: var(--color-stormy-sky);
+}
+
+.globe-rate-form__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+.globe-rate-form__count {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: var(--color-ink);
+  opacity: 0.5;
+}
+
+.globe-submit-btn {
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: none;
+  background: var(--color-stormy-sky);
+  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.globe-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.globe-status-card {
+  flex-shrink: 0;
+  max-width: 420px;
+  margin: 0 auto 12px;
+  text-align: center;
+  padding: 14px 20px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(51, 36, 26, 0.1);
+}
+
+.globe-status-card__swatch {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  margin-bottom: 6px;
+}
+
+.globe-status-card__rating {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.globe-status-card__note {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-ink);
+  opacity: 0.65;
+}
+
+.globe-modal__hint {
+  flex-shrink: 0;
+  max-width: 560px;
+  margin: 0 auto 10px;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--color-ink);
+  opacity: 0.55;
+}
+
+.globe-modal__note {
+  flex-shrink: 0;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--color-burnt-sienna);
+  opacity: 0.85;
+  margin-top: 8px;
+}
+
+.globe-container {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #223 0%, #101018 100%);
+}
+
+@media (max-width: 640px) {
+  .globe-modal {
+    padding: 20px 16px 14px;
+  }
+
+  .globe-modal__title {
+    font-size: 1.35rem;
+  }
+}

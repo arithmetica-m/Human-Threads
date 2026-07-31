@@ -100,5 +100,33 @@ service cloud.firestore {
         allow delete: if false;
       }
     }
+
+    // Daily rating check-ins: one doc per user per day (id "{uid}_{date}"),
+    // shown as pins on the globe once approved. Same pending/approved gate
+    // as letters/comments — the owner can create or resubmit their own
+    // doc, but only ever back to "pending"; only the admin can approve it.
+    match /checkins/{checkinId} {
+      allow read: if resource.data.status == 'approved'
+                  || (request.auth != null && request.auth.uid == resource.data.uid)
+                  || isAdmin();
+
+      allow create: if request.auth != null
+                    && request.auth.uid == request.resource.data.uid
+                    && request.resource.data.status == 'pending';
+
+      // The owner can resubmit their own doc (e.g. editing today's
+      // comment before it's reviewed), but only ever back to "pending" —
+      // only the admin can flip status to approved/rejected.
+      allow update: if request.auth != null &&
+                    (
+                      (request.auth.uid == resource.data.uid &&
+                       request.resource.data.uid == resource.data.uid &&
+                       request.resource.data.status == 'pending')
+                      || (isAdmin() &&
+                          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']))
+                    );
+
+      allow delete: if false;
+    }
   }
 }

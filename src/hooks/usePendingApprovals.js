@@ -9,6 +9,7 @@ import { db } from "../firebase";
 export function usePendingApprovals(enabled) {
   const [pendingLetters, setPendingLetters] = useState([]);
   const [pendingComments, setPendingComments] = useState([]);
+  const [pendingCheckins, setPendingCheckins] = useState([]);
 
   useEffect(() => {
     if (!enabled) {
@@ -48,5 +49,17 @@ export function usePendingApprovals(enabled) {
     return unsubscribe;
   }, [enabled]);
 
-  return { pendingLetters, pendingComments };
+  useEffect(() => {
+    if (!enabled) {
+      setPendingCheckins([]);
+      return undefined;
+    }
+    const q = query(collection(db, "checkins"), where("status", "==", "pending"));
+    const unsubscribe = onSnapshot(q, (snap) => {
+      setPendingCheckins(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    });
+    return unsubscribe;
+  }, [enabled]);
+
+  return { pendingLetters, pendingComments, pendingCheckins };
 }

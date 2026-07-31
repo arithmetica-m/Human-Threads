@@ -2,22 +2,10 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { doc, increment, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useUser } from "./UserContext";
+import { weekKey } from "../utils/dateKeys";
 
 const CommunityContext = createContext(null);
 const STATS_REF = doc(db, "community", "stats");
-
-// Monday of the current week, as a date-string key — used to lazily roll
-// the "this week" counters over. There's no backend cron on the free tier,
-// so the rollover only happens when a signed-in client notices the week
-// has changed (i.e. whenever someone opens the app after Monday).
-function weekKey() {
-  const d = new Date();
-  const day = d.getDay();
-  const diffToMonday = (day === 0 ? -6 : 1) - day;
-  const monday = new Date(d);
-  monday.setDate(d.getDate() + diffToMonday);
-  return monday.toISOString().slice(0, 10);
-}
 
 export function CommunityProvider({ children }) {
   const { user } = useUser();
@@ -57,8 +45,20 @@ export function CommunityProvider({ children }) {
     updateDoc(STATS_REF, patch).catch(() => {});
   };
 
-  const recordLetterWritten = () =>
+  // Mirrors the same 3 actions that grow the shared community tapestry, but
+  // onto the signed-in user's own doc — that field powers the personal
+  // growth visual in the profile panel.
+  const bumpMyGrowth = () => {
+    if (!user) return;
+    updateDoc(doc(db, "users", user.uid), { personalGrowthProgress: increment(1) }).catch(
+      () => {}
+    );
+  };
+
+  const recordLetterWritten = () => {
     bump(["totalLettersWritten", "weekLettersWritten", "tapestryProgress"]);
+    bumpMyGrowth();
+  };
 
   const recordComment = (tab) => {
     if (tab === "tips") bump(["totalTipsGiven", "weekTipsGiven"]);
@@ -68,8 +68,14 @@ export function CommunityProvider({ children }) {
 
   const recordLike = () => bump(["totalLikesGiven"]);
   const recordRead = () => bump(["totalLettersRead", "weekLettersRead"]);
-  const recordDailyComplete = () => bump(["totalDailyCompletions", "tapestryProgress"]);
-  const recordWeeklyComplete = () => bump(["totalWeeklyCompletions", "tapestryProgress"]);
+  const recordDailyComplete = () => {
+    bump(["totalDailyCompletions", "tapestryProgress"]);
+    bumpMyGrowth();
+  };
+  const recordWeeklyComplete = () => {
+    bump(["totalWeeklyCompletions", "tapestryProgress"]);
+    bumpMyGrowth();
+  };
 
   return (
     <CommunityContext.Provider

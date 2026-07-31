@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { useLetters } from "../context/LettersContext";
 import { useUser } from "../context/UserContext";
 import AppTopBar from "../components/AppTopBar";
@@ -7,6 +7,7 @@ import LetterCard from "../components/LetterCard";
 import EncouragingCard from "../components/EncouragingCard";
 import ComposeButton from "../components/ComposeButton";
 import CommunityButton from "../components/CommunityButton";
+import GlobeButton from "../components/GlobeButton";
 import ProfilePanel from "../components/ProfilePanel";
 import ComposeModal from "../components/ComposeModal";
 import CommunityModal from "../components/CommunityModal";
@@ -16,6 +17,10 @@ import EmailVerificationBanner from "../components/EmailVerificationBanner";
 import HeartbeatToast from "../components/HeartbeatToast";
 import "./MainFeed.css";
 
+// The globe view pulls in react-globe.gl/three (a large 3D dependency), so
+// it's only fetched when someone actually opens it, not on initial load.
+const GlobeModal = lazy(() => import("../components/GlobeModal"));
+
 export default function MainFeed() {
   const { letters, viewingLetter } = useLetters();
   const { user } = useUser();
@@ -24,6 +29,7 @@ export default function MainFeed() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [composeOpen, setComposeOpen] = useState(false);
   const [communityOpen, setCommunityOpen] = useState(false);
+  const [globeOpen, setGlobeOpen] = useState(false);
 
   const toggleCategory = (category) => {
     setActiveCategories((prev) =>
@@ -107,10 +113,17 @@ export default function MainFeed() {
 
       <ComposeButton onClick={() => setComposeOpen(true)} />
       <CommunityButton onClick={() => setCommunityOpen(true)} />
+      <GlobeButton onClick={() => setGlobeOpen(true)} />
 
       <ProfilePanel open={profileOpen} onClose={() => setProfileOpen(false)} />
 
       <CommunityModal open={communityOpen} onClose={() => setCommunityOpen(false)} />
+
+      {globeOpen && (
+        <Suspense fallback={null}>
+          <GlobeModal open={globeOpen} onClose={() => setGlobeOpen(false)} />
+        </Suspense>
+      )}
 
       <ComposeModal open={composeOpen} onClose={() => setComposeOpen(false)} />
 

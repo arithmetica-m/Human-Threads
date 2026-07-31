@@ -4,6 +4,7 @@ import { UserProvider, useUser } from "./context/UserContext";
 import { CommunityProvider } from "./context/CommunityContext";
 import { LettersProvider } from "./context/LettersContext";
 import { NotificationsProvider } from "./context/NotificationsContext";
+import { CheckinsProvider } from "./context/CheckinsContext";
 import Landing from "./pages/Landing";
 import AuthPage from "./pages/AuthPage";
 import MainFeed from "./pages/MainFeed";
@@ -62,7 +63,9 @@ function App() {
       <CommunityProvider>
         <LettersProvider>
           <NotificationsProvider>
-            <AppContent />
+            <CheckinsProvider>
+              <AppContent />
+            </CheckinsProvider>
           </NotificationsProvider>
         </LettersProvider>
       </CommunityProvider>

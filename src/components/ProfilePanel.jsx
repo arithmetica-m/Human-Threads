@@ -7,6 +7,7 @@ import { areDailyTasksComplete, areWeeklyTasksComplete } from "../utils/taskStat
 import { getCategoryAccent } from "../data/categories";
 import { MOODS, MAX_MOODS } from "../data/moods";
 import { PROFILE_PICTURES, getProfilePicture } from "../data/profilePictures";
+import PersonalGrowth from "./PersonalGrowth";
 import {
   XIcon,
   UserIcon,
@@ -19,6 +20,7 @@ import {
   ThumbsUpIcon,
   CheckIcon,
   PencilIcon,
+  SproutIcon,
 } from "./icons";
 import "./ProfilePanel.css";
 
@@ -211,6 +213,13 @@ export default function ProfilePanel({ open, onClose }) {
               </div>
             )}
           </header>
+
+          <section className="profile-section">
+            <h3>
+              <SproutIcon size={18} /> Your growth
+            </h3>
+            <PersonalGrowth />
+          </section>
 
           <section className="profile-section">
             <h3>

@@ -16,12 +16,9 @@ import { db } from "../firebase";
 import { useUser } from "./UserContext";
 import { getRandomSupportiveMessage } from "../data/supportiveMessages";
 import { areDailyTasksComplete, areWeeklyTasksComplete } from "../utils/taskStatus";
+import { todayKey } from "../utils/dateKeys";
 
 const NotificationsContext = createContext(null);
-
-function todayKey() {
-  return new Date().toISOString().slice(0, 10);
-}
 
 function daysSince(dateKey) {
   if (!dateKey) return Infinity;

@@ -18,24 +18,9 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { generateUsername } from "../data/usernames";
+import { todayKey, weekKey } from "../utils/dateKeys";
 
 const UserContext = createContext(null);
-
-function todayKey() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-// Monday of the current week, as a date-string key — mirrors the same
-// lazy-rollover key used for the community's weekly stats, so "this week"
-// means the same thing everywhere in the app.
-function weekKey() {
-  const d = new Date();
-  const day = d.getDay();
-  const diffToMonday = (day === 0 ? -6 : 1) - day;
-  const monday = new Date(d);
-  monday.setDate(d.getDate() + diffToMonday);
-  return monday.toISOString().slice(0, 10);
-}
 
 function friendlyAuthError(error) {
   switch (error.code) {
@@ -135,6 +120,7 @@ export function UserProvider({ children }) {
         dailyChallenge: "",
         dailyTasksDone: [],
         weeklyTasksDone: [],
+        personalGrowthProgress: 0,
         favouriteLetterIds: [],
         readLetterIds: [],
         lastDailySupportDate: null,

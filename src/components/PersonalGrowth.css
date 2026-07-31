@@ -1,0 +1,44 @@
+.personal-growth {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0 8px;
+}
+
+.personal-growth__svg {
+  width: 100%;
+  max-width: 150px;
+}
+
+.personal-growth__stage {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.personal-growth__bar {
+  width: 100%;
+  max-width: 220px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(51, 36, 26, 0.1);
+  overflow: hidden;
+}
+
+.personal-growth__bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-sage-green), var(--color-burnt-sienna-light));
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.personal-growth__caption {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--color-ink);
+  opacity: 0.6;
+  text-align: center;
+}

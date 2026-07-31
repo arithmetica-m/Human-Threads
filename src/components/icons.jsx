@@ -168,3 +168,25 @@ export function ClipboardIcon({ size = 18 }) {
     </svg>
   );
 }
+
+export function SproutIcon({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M12 22V12" />
+      <path d="M12 12c0-4 3-6 7-6 0 4-3 6-7 6z" />
+      <path d="M12 15c0-3-2.5-5-6-5 0 3 2.5 5 6 5z" />
+    </svg>
+  );
+}
+
+export function GlobeIcon({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="12" cy="12" r="10" />
+      <ellipse cx="12" cy="12" rx="4.2" ry="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M4 7.5c2.2 1.3 5 2 8 2s5.8-.7 8-2" />
+      <path d="M4 16.5c2.2-1.3 5-2 8-2s5.8.7 8 2" />
+    </svg>
+  );
+}
