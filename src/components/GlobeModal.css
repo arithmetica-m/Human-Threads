@@ -220,7 +220,43 @@
   min-height: 0;
   border-radius: 12px;
   overflow: hidden;
-  background: radial-gradient(circle at center, #223 0%, #101018 100%);
+  background: radial-gradient(
+    circle at center,
+    #fdf9f4 0%,
+    var(--color-ivory-sand) 60%,
+    rgba(183, 192, 169, 0.4) 130%
+  );
+}
+
+/* Tints the (photographic) earth texture toward the site's warm, muted
+   palette instead of its natural blue/green — continents stay
+   recognisable, colours just lean sepia/sage rather than travel-photo. */
+.globe-container canvas {
+  filter: sepia(0.45) saturate(1.35) hue-rotate(-8deg) brightness(1.03);
+}
+
+/* Teardrop map-pin shape (classic border-radius + rotate trick). The
+   wrapper it's nested in is sized 0x0 by react-globe.gl's CSS2D layer and
+   anchored exactly at the check-in's lat/lng, so the negative margins here
+   shift the pin up so its point — not its center — lands on that anchor. */
+.globe-pin {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 26px;
+  height: 26px;
+  margin: -26px 0 0 -13px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--pin-color, var(--color-burnt-sienna));
+  border: 2px solid #fdf9f4;
+  box-shadow: 0 3px 8px rgba(51, 36, 26, 0.45);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.globe-pin:hover {
+  transform: rotate(-45deg) scale(1.15);
 }
 
 @media (max-width: 640px) {

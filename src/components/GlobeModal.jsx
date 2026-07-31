@@ -135,13 +135,25 @@ export default function GlobeModal({ open, onClose }) {
               globeImageUrl={earthTexture}
               showAtmosphere
               atmosphereColor="#8d957e"
-              pointsData={points}
-              pointLat="lat"
-              pointLng="lng"
-              pointColor="color"
-              pointAltitude={0.012}
-              pointRadius={0.4}
-              onPointClick={(point) => setSelectedCheckin(point)}
+              htmlElementsData={points}
+              htmlLat="lat"
+              htmlLng="lng"
+              htmlElement={(d) => {
+                const wrapper = document.createElement("div");
+                const pin = document.createElement("div");
+                pin.className = "globe-pin";
+                pin.style.setProperty("--pin-color", d.color);
+                pin.onclick = (e) => {
+                  e.stopPropagation();
+                  setSelectedCheckin(d);
+                };
+                wrapper.appendChild(pin);
+                return wrapper;
+              }}
+              htmlElementVisibilityModifier={(el, isVisible) => {
+                el.style.opacity = isVisible ? "1" : "0";
+                el.style.pointerEvents = isVisible ? "auto" : "none";
+              }}
             />
           )}
           {selectedCheckin && (
