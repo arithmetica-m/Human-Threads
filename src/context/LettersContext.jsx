@@ -15,14 +15,17 @@ import {
 import { db } from "../firebase";
 import { useUser } from "./UserContext";
 import { useCommunity } from "./CommunityContext";
+import { todayKey } from "../utils/dateKeys";
 
 const LettersContext = createContext(null);
+
+const DAILY_LETTER_COUNT = 3;
 
 // Public feed = approved letters only (moderation gate). "My Letters" needs
 // a separate listener since it must show the author's own pending/rejected
 // letters too, which the public query excludes.
 export function LettersProvider({ children }) {
-  const { user, toggleArrayField } = useUser();
+  const { user, toggleArrayField, updateUser } = useUser();
   const { recordLetterWritten, recordLike, recordComment, recordRead } = useCommunity();
   const [letters, setLetters] = useState([]);
   const [myLetters, setMyLetters] = useState([]);
@@ -53,6 +56,36 @@ export function LettersProvider({ children }) {
     });
     return unsubscribe;
   }, [user]);
+
+  // Once a day, lazily assign up to DAILY_LETTER_COUNT random unread
+  // letters (never your own) — same "no backend cron, roll over whenever a
+  // signed-in client notices the date changed" approach used everywhere
+  // else in this app (see UserContext.jsx's daily/weekly reset).
+  useEffect(() => {
+    if (!user || letters.length === 0) return;
+    const today = todayKey();
+    if (user.todaysLetterQueueDate === today) return;
+
+    const readIds = user.readLetterIds || [];
+    const pool = letters.filter(
+      (l) => l.authorUid !== user.uid && !readIds.includes(l.id)
+    );
+    const shuffled = [...pool].sort(() => Math.random() - 0.5);
+    const picked = shuffled.slice(0, DAILY_LETTER_COUNT).map((l) => l.id);
+
+    updateUser({ todaysLetterQueue: picked, todaysLetterQueueDate: today }).catch(() => {});
+    // Only re-run when the day changes, the letter pool changes, or the
+    // user identity changes — not on every read/like, which would just
+    // re-check todaysLetterQueueDate and no-op anyway.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.uid, user?.todaysLetterQueueDate, letters.length]);
+
+  // A queued letter drops out the moment it's read (openLetter below adds
+  // it to readLetterIds) — no separate "consumed" flag needed.
+  const readIds = user?.readLetterIds || [];
+  const todaysLetters = (user?.todaysLetterQueue || [])
+    .map((id) => letters.find((l) => l.id === id))
+    .filter((l) => l && !readIds.includes(l.id));
 
   const addLetter = async (letter) => {
     await addDoc(collection(db, "letters"), {
@@ -139,6 +172,7 @@ export function LettersProvider({ children }) {
       value={{
         letters,
         myLetters,
+        todaysLetters,
         addLetter,
         toggleLike,
         addComment,

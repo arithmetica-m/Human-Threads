@@ -3,7 +3,14 @@ import { db } from "../firebase";
 import { CheckIcon, XIcon } from "./icons";
 import "./AdminPanel.css";
 
-export default function AdminPanel({ open, onClose, pendingLetters, pendingComments, pendingCheckins }) {
+export default function AdminPanel({
+  open,
+  onClose,
+  pendingLetters,
+  pendingComments,
+  pendingCheckins,
+  pendingGratitude,
+}) {
   if (!open) return null;
 
   const setLetterStatus = (letterId, status) => {
@@ -18,7 +25,12 @@ export default function AdminPanel({ open, onClose, pendingLetters, pendingComme
     updateDoc(doc(db, "checkins", checkinId), { status }).catch(() => {});
   };
 
-  const total = pendingLetters.length + pendingComments.length + pendingCheckins.length;
+  const setGratitudeStatus = (entryId, status) => {
+    updateDoc(doc(db, "gratitude", entryId), { status }).catch(() => {});
+  };
+
+  const total =
+    pendingLetters.length + pendingComments.length + pendingCheckins.length + pendingGratitude.length;
 
   return (
     <div className="admin-overlay" onClick={onClose}>
@@ -118,6 +130,34 @@ export default function AdminPanel({ open, onClose, pendingLetters, pendingComme
                       className="admin-action admin-action--reject"
                       onClick={() => setCheckinStatus(checkin.id, "rejected")}
                       aria-label="Reject check-in"
+                    >
+                      <XIcon size={15} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              {pendingGratitude.map((entry) => (
+                <div key={entry.id} className="admin-row">
+                  <span className="admin-row__tag admin-row__tag--comment">Gratitude</span>
+                  <div className="admin-row__body">
+                    <p className="admin-row__excerpt">{entry.text}</p>
+                    <p className="admin-row__meta">from {entry.authorUsername}</p>
+                  </div>
+                  <div className="admin-row__actions">
+                    <button
+                      type="button"
+                      className="admin-action admin-action--approve"
+                      onClick={() => setGratitudeStatus(entry.id, "approved")}
+                      aria-label="Approve gratitude entry"
+                    >
+                      <CheckIcon size={15} />
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-action admin-action--reject"
+                      onClick={() => setGratitudeStatus(entry.id, "rejected")}
+                      aria-label="Reject gratitude entry"
                     >
                       <XIcon size={15} />
                     </button>

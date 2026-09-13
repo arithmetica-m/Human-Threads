@@ -5,6 +5,7 @@ import { CommunityProvider } from "./context/CommunityContext";
 import { LettersProvider } from "./context/LettersContext";
 import { NotificationsProvider } from "./context/NotificationsContext";
 import { CheckinsProvider } from "./context/CheckinsContext";
+import { GratitudeProvider } from "./context/GratitudeContext";
 import Landing from "./pages/Landing";
 import AuthPage from "./pages/AuthPage";
 import MainFeed from "./pages/MainFeed";
@@ -64,7 +65,9 @@ function App() {
         <LettersProvider>
           <NotificationsProvider>
             <CheckinsProvider>
-              <AppContent />
+              <GratitudeProvider>
+                <AppContent />
+              </GratitudeProvider>
             </CheckinsProvider>
           </NotificationsProvider>
         </LettersProvider>

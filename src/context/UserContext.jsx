@@ -123,6 +123,8 @@ export function UserProvider({ children }) {
         personalGrowthProgress: 0,
         favouriteLetterIds: [],
         readLetterIds: [],
+        todaysLetterQueue: [],
+        todaysLetterQueueDate: null,
         lastDailySupportDate: null,
         lastDailyTaskReminderDate: null,
         lastWeeklyTaskReminderDate: null,

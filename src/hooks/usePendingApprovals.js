@@ -10,6 +10,7 @@ export function usePendingApprovals(enabled) {
   const [pendingLetters, setPendingLetters] = useState([]);
   const [pendingComments, setPendingComments] = useState([]);
   const [pendingCheckins, setPendingCheckins] = useState([]);
+  const [pendingGratitude, setPendingGratitude] = useState([]);
 
   useEffect(() => {
     if (!enabled) {
@@ -61,5 +62,17 @@ export function usePendingApprovals(enabled) {
     return unsubscribe;
   }, [enabled]);
 
-  return { pendingLetters, pendingComments, pendingCheckins };
+  useEffect(() => {
+    if (!enabled) {
+      setPendingGratitude([]);
+      return undefined;
+    }
+    const q = query(collection(db, "gratitude"), where("status", "==", "pending"));
+    const unsubscribe = onSnapshot(q, (snap) => {
+      setPendingGratitude(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    });
+    return unsubscribe;
+  }, [enabled]);
+
+  return { pendingLetters, pendingComments, pendingCheckins, pendingGratitude };
 }

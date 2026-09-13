@@ -128,5 +128,24 @@ service cloud.firestore {
 
       allow delete: if false;
     }
+
+    // Gratitude entries: unlimited (no per-day cap, unlike checkins) short
+    // public posts. Same pending/approved gate as everything else — the
+    // owner can always read their own regardless of status, anyone can
+    // read approved ones, only the admin can flip status.
+    match /gratitude/{entryId} {
+      allow read: if resource.data.status == 'approved'
+                  || (request.auth != null && request.auth.uid == resource.data.authorUid)
+                  || isAdmin();
+
+      allow create: if request.auth != null
+                    && request.auth.uid == request.resource.data.authorUid
+                    && request.resource.data.status == 'pending';
+
+      allow update: if isAdmin() &&
+                    request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+
+      allow delete: if false;
+    }
   }
 }

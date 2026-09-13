@@ -1,0 +1,76 @@
+.gratitude-section {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.gratitude-compose {
+  margin-bottom: 24px;
+}
+
+.gratitude-compose textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(51, 36, 26, 0.18);
+  background: #fff;
+  color: var(--color-ink);
+  outline: none;
+  min-height: 64px;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.gratitude-compose textarea:focus {
+  border-color: var(--color-sage-green);
+}
+
+.gratitude-compose__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+.gratitude-compose__count {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: var(--color-ink);
+  opacity: 0.5;
+}
+
+.gratitude-compose button {
+  padding: 8px 22px;
+  border-radius: 999px;
+  border: none;
+  background: var(--color-sage-green);
+  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.gratitude-compose button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.gratitude-section__empty {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-ink);
+  opacity: 0.55;
+  font-style: italic;
+  text-align: center;
+}
+
+.gratitude-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
