@@ -46,6 +46,7 @@ service cloud.firestore {
           'totalLikesGiven',
           'totalLettersRead', 'weekLettersRead',
           'totalDailyCompletions', 'totalWeeklyCompletions',
+          'totalGratitudeWritten', 'weekGratitudeWritten',
           'tapestryProgress', 'weekStartDate'
         ]);
       allow create: if false;

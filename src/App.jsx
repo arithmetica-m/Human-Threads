@@ -63,13 +63,13 @@ function App() {
     <UserProvider>
       <CommunityProvider>
         <LettersProvider>
-          <NotificationsProvider>
-            <CheckinsProvider>
-              <GratitudeProvider>
+          <GratitudeProvider>
+            <NotificationsProvider>
+              <CheckinsProvider>
                 <AppContent />
-              </GratitudeProvider>
-            </CheckinsProvider>
-          </NotificationsProvider>
+              </CheckinsProvider>
+            </NotificationsProvider>
+          </GratitudeProvider>
         </LettersProvider>
       </CommunityProvider>
       <Analytics />

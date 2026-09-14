@@ -1,5 +1,13 @@
 import { useCommunity } from "../context/CommunityContext";
-import { XIcon, PencilIcon, LightbulbIcon, HeartIcon, CommentIcon, EyeIcon } from "./icons";
+import {
+  XIcon,
+  PencilIcon,
+  LightbulbIcon,
+  HeartIcon,
+  CommentIcon,
+  EyeIcon,
+  SproutIcon,
+} from "./icons";
 import TapestryButterfly from "./TapestryButterfly";
 import "./CommunityModal.css";
 
@@ -10,6 +18,8 @@ const STAT_ITEMS = [
   { key: "weekLettersWritten", label: "Letters written this week", Icon: PencilIcon },
   { key: "totalLettersWritten", label: "Letters written in total", Icon: PencilIcon },
   { key: "totalComments", label: "Comments shared in total", Icon: CommentIcon },
+  { key: "weekGratitudeWritten", label: "Gratitude entries shared this week", Icon: SproutIcon },
+  { key: "totalGratitudeWritten", label: "Gratitude entries shared in total", Icon: SproutIcon },
 ];
 
 export default function CommunityModal({ open, onClose }) {

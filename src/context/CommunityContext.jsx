@@ -33,6 +33,7 @@ export function CommunityProvider({ children }) {
         weekTipsGiven: 0,
         weekOtherComments: 0,
         weekLettersRead: 0,
+        weekGratitudeWritten: 0,
       }).catch(() => {});
     }
   }, [stats]);
@@ -60,6 +61,14 @@ export function CommunityProvider({ children }) {
     bumpMyGrowth();
   };
 
+  // Same growth mechanic as writing a letter — gratitude entries are
+  // unlimited, so each one written grows both the personal and community
+  // tapestries, with no daily ceiling.
+  const recordGratitudeWritten = () => {
+    bump(["totalGratitudeWritten", "weekGratitudeWritten", "tapestryProgress"]);
+    bumpMyGrowth();
+  };
+
   const recordComment = (tab) => {
     if (tab === "tips") bump(["totalTipsGiven", "weekTipsGiven"]);
     else if (tab === "support") bump(["totalSupportGiven", "weekSupportGiven"]);
@@ -82,6 +91,7 @@ export function CommunityProvider({ children }) {
       value={{
         stats,
         recordLetterWritten,
+        recordGratitudeWritten,
         recordComment,
         recordLike,
         recordRead,

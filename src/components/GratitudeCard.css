@@ -1,32 +1,112 @@
 .gratitude-card {
-  padding: 14px 18px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(51, 36, 26, 0.1);
-}
-
-.gratitude-card__text {
-  font-family: var(--font-body);
-  font-size: 0.92rem;
-  line-height: 1.5;
-  color: var(--color-ink);
-  margin-bottom: 8px;
-}
-
-.gratitude-card__meta {
+  position: relative;
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  width: 100%;
+  min-height: 200px;
+  padding: 26px 22px 18px;
+  border-radius: 6px;
+  background-color: #fdf7ee;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px solid rgba(51, 36, 26, 0.1);
+  box-shadow: 0 4px 10px rgba(51, 36, 26, 0.06);
+  transform: rotate(var(--rotation, 0deg));
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-sizing: border-box;
+}
+
+.gratitude-card:hover {
+  transform: rotate(0deg) translateY(-4px) scale(1.015);
+  box-shadow: 0 14px 26px rgba(51, 36, 26, 0.16);
+}
+
+.gratitude-card__stickers {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  z-index: 1;
+}
+
+.gratitude-card__stickers img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 5px rgba(51, 36, 26, 0.25));
+}
+
+.gratitude-card__stickers img:not(:first-child) {
+  margin-left: -12px;
+}
+
+.gratitude-card__stickers img:nth-child(1) {
+  transform: rotate(-8deg);
+}
+
+.gratitude-card__stickers img:nth-child(2) {
+  transform: rotate(10deg) translateY(6px);
+}
+
+.gratitude-card__stickers img:nth-child(3) {
+  transform: rotate(-4deg) translateY(-4px);
+}
+
+.gratitude-card__stamp {
+  position: absolute;
+  top: -12px;
+  left: 22px;
+  padding: 6px 14px 9px;
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--accent);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+  box-shadow: 0 3px 7px rgba(51, 36, 26, 0.2);
+  white-space: nowrap;
 }
 
 .gratitude-card__author {
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.8rem;
+  font-style: italic;
   color: var(--color-ink);
-  opacity: 0.55;
+  opacity: 0.6;
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+
+.gratitude-card__title {
+  font-family: var(--font-hand);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-top: 6px;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.gratitude-card__excerpt {
+  font-family: var(--font-hand);
+  font-weight: 500;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: var(--color-ink);
+  opacity: 0.88;
+  flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .gratitude-card__pending {
+  align-self: flex-start;
+  margin-top: 12px;
   font-family: var(--font-body);
   font-size: 0.65rem;
   font-weight: 600;

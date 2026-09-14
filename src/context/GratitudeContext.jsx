@@ -10,17 +10,18 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { useUser } from "./UserContext";
+import { useCommunity } from "./CommunityContext";
 
 const GratitudeContext = createContext(null);
 
-export const GRATITUDE_MAX_LENGTH = 200;
-
-// Unlimited, low-friction counterpart to letters — no daily cap, since
+// Unlimited counterpart to letters, sharing the same compose flow (title,
+// background, stickers) minus a category — no daily cap, since
 // gratitude entries aren't the kind of content that builds up distress.
 // Same public/mine split as LettersContext: approved entries are public,
 // your own show immediately (tagged "pending") regardless of status.
 export function GratitudeProvider({ children }) {
   const { user } = useUser();
+  const { recordGratitudeWritten } = useCommunity();
   const [entries, setEntries] = useState([]);
   const [myEntries, setMyEntries] = useState([]);
 
@@ -48,14 +49,18 @@ export function GratitudeProvider({ children }) {
     return unsubscribe;
   }, [user?.uid]);
 
-  const addEntry = async (text) => {
+  const addEntry = async ({ title, excerpt, backgroundId, stickerIds }) => {
     await addDoc(collection(db, "gratitude"), {
       authorUid: user.uid,
       authorUsername: user.username,
-      text: text.trim().slice(0, GRATITUDE_MAX_LENGTH),
+      title,
+      excerpt,
+      backgroundId: backgroundId ?? null,
+      stickerIds: stickerIds || [],
       status: "pending",
       createdAt: serverTimestamp(),
     });
+    recordGratitudeWritten();
   };
 
   return (

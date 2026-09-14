@@ -126,6 +126,7 @@ export function UserProvider({ children }) {
         todaysLetterQueue: [],
         todaysLetterQueueDate: null,
         lastDailySupportDate: null,
+        lastDailyCompletionDate: null,
         lastDailyTaskReminderDate: null,
         lastWeeklyTaskReminderDate: null,
         lastDailyResetDate: todayKey(),

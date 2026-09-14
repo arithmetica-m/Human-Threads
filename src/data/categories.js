@@ -20,6 +20,7 @@ const ACCENTS = {
   Happiness: "var(--color-sage-green-light)",
   Change: "var(--color-burnt-sienna-light)",
   "Invisible Battles": "var(--color-ink)",
+  Gratitude: "var(--color-sage-green)",
 };
 
 export function getCategoryAccent(category) {
@@ -38,6 +39,7 @@ const TINTS = {
   Happiness: "rgba(183, 192, 169, 0.35)",
   Change: "rgba(201, 123, 74, 0.26)",
   "Invisible Battles": "rgba(51, 36, 26, 0.16)",
+  Gratitude: "rgba(141, 149, 126, 0.28)",
 };
 
 // Lighter versions of the same tints, used on cards flagged `lightBg` so the
@@ -52,6 +54,7 @@ const TINTS_LIGHT = {
   Happiness: "rgba(183, 192, 169, 0.14)",
   Change: "rgba(201, 123, 74, 0.1)",
   "Invisible Battles": "rgba(51, 36, 26, 0.06)",
+  Gratitude: "rgba(141, 149, 126, 0.12)",
 };
 
 export function getCategoryTint(category, light = false) {

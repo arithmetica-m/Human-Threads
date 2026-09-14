@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { useUser } from "./UserContext";
+import { useGratitude } from "./GratitudeContext";
 import { getRandomSupportiveMessage } from "../data/supportiveMessages";
 import { areDailyTasksComplete, areWeeklyTasksComplete } from "../utils/taskStatus";
 import { todayKey } from "../utils/dateKeys";
@@ -29,6 +30,7 @@ function daysSince(dateKey) {
 
 export function NotificationsProvider({ children }) {
   const { user, updateUser } = useUser();
+  const { myEntries: myGratitudeEntries } = useGratitude();
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
@@ -75,7 +77,10 @@ export function NotificationsProvider({ children }) {
         .catch(() => {});
     }
 
-    if (user.lastDailyTaskReminderDate !== today && !areDailyTasksComplete(user)) {
+    if (
+      user.lastDailyTaskReminderDate !== today &&
+      !areDailyTasksComplete(user, myGratitudeEntries)
+    ) {
       addDoc(notifsRef, {
         type: "daily-task",
         message: "You've still got daily activities to complete today.",

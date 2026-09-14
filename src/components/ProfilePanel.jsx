@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "../context/UserContext";
 import { useLetters } from "../context/LettersContext";
 import { useCommunity } from "../context/CommunityContext";
+import { useGratitude } from "../context/GratitudeContext";
 import { calculateAge } from "../utils/age";
-import { areDailyTasksComplete, areWeeklyTasksComplete } from "../utils/taskStatus";
+import { areDailyTasksComplete, areWeeklyTasksComplete, hasGratitudeToday } from "../utils/taskStatus";
+import { todayKey } from "../utils/dateKeys";
 import { getCategoryAccent } from "../data/categories";
 import { MOODS, MAX_MOODS } from "../data/moods";
 import { PROFILE_PICTURES, getProfilePicture } from "../data/profilePictures";
@@ -32,17 +34,17 @@ const DAILY_TASKS = [
   },
   {
     id: "support",
-    label: "Comment on someone else's story, showing support",
+    label: "Comment on someone else's letter, showing support",
     Icon: HeartIcon,
   },
   {
     id: "tip",
-    label: "Comment on someone else's story, sharing a tip",
+    label: "Comment on someone else's letter, sharing a tip",
     Icon: LightbulbIcon,
   },
   {
-    id: "encourage",
-    label: "Comment and like someone's daily tasks",
+    id: "gratitude",
+    label: "Write a gratitude entry",
     Icon: ThumbsUpIcon,
   },
 ];
@@ -74,8 +76,26 @@ export default function ProfilePanel({ open, onClose }) {
   const { user, updateUser, toggleArrayField, logOut } = useUser();
   const { letters, myLetters, openLetter } = useLetters();
   const { recordDailyComplete, recordWeeklyComplete } = useCommunity();
+  const { myEntries: myGratitudeEntries } = useGratitude();
   const [view, setView] = useState("main");
   const [pictureOpen, setPictureOpen] = useState(false);
+
+  // "Write a gratitude entry" is detected from actually submitting one
+  // (see GratitudeSection.jsx), not a manual toggle — so the moment when
+  // all 4 daily tasks become complete isn't necessarily a click inside this
+  // panel. Watching the derived completion state here (this component is
+  // always mounted, just conditionally rendered) catches that transition
+  // wherever it happens, once per day.
+  useEffect(() => {
+    if (!user) return;
+    const today = todayKey();
+    if (user.lastDailyCompletionDate === today) return;
+    if (areDailyTasksComplete(user, myGratitudeEntries)) {
+      recordDailyComplete();
+      updateUser({ lastDailyCompletionDate: today });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, myGratitudeEntries]);
 
   if (!open || !user) return null;
 
@@ -99,28 +119,27 @@ export default function ProfilePanel({ open, onClose }) {
   const setAccomplishment = (index, value) => {
     const next = [...(user.dailyAccomplishments || ["", "", ""])];
     next[index] = value;
-    const wasComplete = areDailyTasksComplete(user);
-    const willBeComplete = areDailyTasksComplete({ ...user, dailyAccomplishments: next });
     updateUser({ dailyAccomplishments: next });
-    if (!wasComplete && willBeComplete) recordDailyComplete();
   };
 
-  // "accomplishments" completes itself once all 3 fields are filled in;
-  // the rest are manual until real commenting elsewhere in the app can set them.
+  // "accomplishments" completes itself once all 3 fields are filled in, and
+  // "gratitude" completes itself once you've submitted an entry today (see
+  // GratitudeSection.jsx) — "support"/"tip" stay manual self-toggles since
+  // there's no easy way yet to verify those from here.
   const accomplishmentsDone = (user.dailyAccomplishments || []).every((a) => a.trim() !== "");
+  const AUTO_DAILY_TASK_IDS = ["accomplishments", "gratitude"];
 
-  const isDailyDone = (id) =>
-    id === "accomplishments" ? accomplishmentsDone : (user.dailyTasksDone || []).includes(id);
+  const isDailyDone = (id) => {
+    if (id === "accomplishments") return accomplishmentsDone;
+    if (id === "gratitude") return hasGratitudeToday(myGratitudeEntries);
+    return (user.dailyTasksDone || []).includes(id);
+  };
 
   const toggleDailyTask = (id) => {
-    if (id === "accomplishments") return;
+    if (AUTO_DAILY_TASK_IDS.includes(id)) return;
     const current = user.dailyTasksDone || [];
     const adding = !current.includes(id);
-    const nextDone = adding ? [...current, id] : current.filter((t) => t !== id);
-    const wasComplete = areDailyTasksComplete(user);
-    const willBeComplete = areDailyTasksComplete({ ...user, dailyTasksDone: nextDone });
     toggleArrayField("dailyTasksDone", id, adding);
-    if (!wasComplete && willBeComplete) recordDailyComplete();
   };
 
   const toggleWeeklyTask = (id) => {
@@ -283,7 +302,7 @@ export default function ProfilePanel({ open, onClose }) {
                     <button
                       className={`task-row ${done ? "active" : ""}`}
                       onClick={() => toggleDailyTask(id)}
-                      disabled={id === "accomplishments"}
+                      disabled={AUTO_DAILY_TASK_IDS.includes(id)}
                     >
                       <span className="task-row__icon">
                         <Icon size={18} />

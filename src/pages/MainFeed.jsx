@@ -101,7 +101,8 @@ export default function MainFeed() {
       <section className="gratitude-page-section">
         <h2 className="feed-section__title">Gratitude</h2>
         <p className="feed-section__hint">
-          Share as many as you&apos;d like — there&apos;s no limit here.
+          Tap Write below and choose "Gratitude entry" to add your own — there&apos;s no
+          limit here.
         </p>
         <GratitudeSection />
       </section>
