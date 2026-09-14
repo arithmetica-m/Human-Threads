@@ -148,5 +148,23 @@ service cloud.firestore {
 
       allow delete: if false;
     }
+
+    // Category discussion messages: general support/tip/other posts scoped
+    // to a whole category rather than one specific letter. Same
+    // pending/approved gate as everything else.
+    match /categoryMessages/{messageId} {
+      allow read: if resource.data.status == 'approved'
+                  || (request.auth != null && request.auth.uid == resource.data.authorUid)
+                  || isAdmin();
+
+      allow create: if request.auth != null
+                    && request.auth.uid == request.resource.data.authorUid
+                    && request.resource.data.status == 'pending';
+
+      allow update: if isAdmin() &&
+                    request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+
+      allow delete: if false;
+    }
   }
 }

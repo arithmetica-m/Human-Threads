@@ -13,13 +13,22 @@ export default function AppTopBar({ onOpenProfile }) {
   const { user } = useUser();
   const { unreadCount } = useNotifications();
   const isAdmin = user?.email === ADMIN_EMAIL;
-  const { pendingLetters, pendingComments, pendingCheckins, pendingGratitude } =
-    usePendingApprovals(isAdmin);
+  const {
+    pendingLetters,
+    pendingComments,
+    pendingCheckins,
+    pendingGratitude,
+    pendingCategoryMessages,
+  } = usePendingApprovals(isAdmin);
   const [notifOpen, setNotifOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
   const pictureUrl = user?.profilePictureId ? getProfilePicture(user.profilePictureId) : null;
   const pendingCount =
-    pendingLetters.length + pendingComments.length + pendingCheckins.length + pendingGratitude.length;
+    pendingLetters.length +
+    pendingComments.length +
+    pendingCheckins.length +
+    pendingGratitude.length +
+    pendingCategoryMessages.length;
 
   return (
     <header className="app-topbar">
@@ -67,6 +76,7 @@ export default function AppTopBar({ onOpenProfile }) {
           pendingComments={pendingComments}
           pendingCheckins={pendingCheckins}
           pendingGratitude={pendingGratitude}
+          pendingCategoryMessages={pendingCategoryMessages}
         />
       )}
     </header>

@@ -7,9 +7,11 @@ import EncouragingCard from "../components/EncouragingCard";
 import ComposeButton from "../components/ComposeButton";
 import CommunityButton from "../components/CommunityButton";
 import GlobeButton from "../components/GlobeButton";
+import CategoriesButton from "../components/CategoriesButton";
 import ProfilePanel from "../components/ProfilePanel";
 import ComposeModal from "../components/ComposeModal";
 import CommunityModal from "../components/CommunityModal";
+import CategoriesModal from "../components/CategoriesModal";
 import LetterDetailModal from "../components/LetterDetailModal";
 import CommentModal from "../components/CommentModal";
 import EmailVerificationBanner from "../components/EmailVerificationBanner";
@@ -23,24 +25,25 @@ const GlobeModal = lazy(() => import("../components/GlobeModal"));
 
 export default function MainFeed() {
   const { todaysLetters, viewingLetter } = useLetters();
-  const [activeCategories, setActiveCategories] = useState([]);
+  // Single-select — picking a category clears whichever one was active
+  // before, rather than filtering to multiple at once.
+  const [activeCategory, setActiveCategory] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [composeOpen, setComposeOpen] = useState(false);
   const [communityOpen, setCommunityOpen] = useState(false);
   const [globeOpen, setGlobeOpen] = useState(false);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
 
   const toggleCategory = (category) => {
-    setActiveCategories((prev) =>
-      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
-    );
+    setActiveCategory((prev) => (prev === category ? null : category));
   };
 
   // Only ever up to 3 items, so this is just hiding ones you don't have
   // capacity for today, not searching/sorting a real feed.
   const visibleTodaysLetters = useMemo(() => {
-    if (activeCategories.length === 0) return todaysLetters;
-    return todaysLetters.filter((l) => activeCategories.includes(l.category));
-  }, [todaysLetters, activeCategories]);
+    if (!activeCategory) return todaysLetters;
+    return todaysLetters.filter((l) => l.category === activeCategory);
+  }, [todaysLetters, activeCategory]);
 
   return (
     <div className="main-feed">
@@ -65,15 +68,15 @@ export default function MainFeed() {
         {todaysLetters.length > 0 && (
           <div className="filter-chips">
             <button
-              className={`chip ${activeCategories.length === 0 ? "active" : ""}`}
-              onClick={() => setActiveCategories([])}
+              className={`chip ${!activeCategory ? "active" : ""}`}
+              onClick={() => setActiveCategory(null)}
             >
               All
             </button>
             {EMOTIONS.map((emotion) => (
               <button
                 key={emotion}
-                className={`chip ${activeCategories.includes(emotion) ? "active" : ""}`}
+                className={`chip ${activeCategory === emotion ? "active" : ""}`}
                 onClick={() => toggleCategory(emotion)}
               >
                 {emotion}
@@ -110,10 +113,13 @@ export default function MainFeed() {
       <ComposeButton onClick={() => setComposeOpen(true)} />
       <CommunityButton onClick={() => setCommunityOpen(true)} />
       <GlobeButton onClick={() => setGlobeOpen(true)} />
+      <CategoriesButton onClick={() => setCategoriesOpen(true)} />
 
       <ProfilePanel open={profileOpen} onClose={() => setProfileOpen(false)} />
 
       <CommunityModal open={communityOpen} onClose={() => setCommunityOpen(false)} />
+
+      <CategoriesModal open={categoriesOpen} onClose={() => setCategoriesOpen(false)} />
 
       {globeOpen && (
         <Suspense fallback={null}>

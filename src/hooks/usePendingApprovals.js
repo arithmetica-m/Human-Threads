@@ -11,6 +11,7 @@ export function usePendingApprovals(enabled) {
   const [pendingComments, setPendingComments] = useState([]);
   const [pendingCheckins, setPendingCheckins] = useState([]);
   const [pendingGratitude, setPendingGratitude] = useState([]);
+  const [pendingCategoryMessages, setPendingCategoryMessages] = useState([]);
 
   useEffect(() => {
     if (!enabled) {
@@ -74,5 +75,23 @@ export function usePendingApprovals(enabled) {
     return unsubscribe;
   }, [enabled]);
 
-  return { pendingLetters, pendingComments, pendingCheckins, pendingGratitude };
+  useEffect(() => {
+    if (!enabled) {
+      setPendingCategoryMessages([]);
+      return undefined;
+    }
+    const q = query(collection(db, "categoryMessages"), where("status", "==", "pending"));
+    const unsubscribe = onSnapshot(q, (snap) => {
+      setPendingCategoryMessages(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    });
+    return unsubscribe;
+  }, [enabled]);
+
+  return {
+    pendingLetters,
+    pendingComments,
+    pendingCheckins,
+    pendingGratitude,
+    pendingCategoryMessages,
+  };
 }
